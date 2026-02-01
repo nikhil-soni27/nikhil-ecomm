@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Heart, ShoppingBag, User, Search, Menu, X, Leaf } from 'lucide-react';
-import type { User as UserType } from '@/app/App';
+import React, { useState } from "react";
+import { Heart, ShoppingBag, User, Search, Menu, X, Leaf } from "lucide-react";
+import type { User as UserType } from "@/app/App";
 
 interface NavigationProps {
   cartCount: number;
@@ -29,14 +29,17 @@ export function Navigation({
   onSearchClick,
   user,
   searchQuery,
-  onSearchChange
+  onSearchChange,
 }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-[#FAF7F2]/95 backdrop-blur-sm sticky top-0 z-50" style={{
-      boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
-    }}>
+    <nav
+      className="bg-[#FAF7F2]/95 backdrop-blur-sm sticky top-0 z-50"
+      style={{
+        boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-[75px]">
           {/* Logo */}
@@ -153,7 +156,10 @@ export function Navigation({
             <div className="flex flex-col space-y-4">
               {/* Mobile Search */}
               <div className="flex items-center bg-[#FAF7F2] border border-[#9CAF88] rounded-full px-4 py-2">
-                <Search className="text-[#9CAF88] w-4 h-4 mr-2" strokeWidth={2} />
+                <Search
+                  className="text-[#9CAF88] w-4 h-4 mr-2"
+                  strokeWidth={2}
+                />
                 <input
                   type="text"
                   placeholder="Search natural products..."
@@ -198,7 +204,9 @@ export function Navigation({
                 className="font-['Lora'] text-sm text-[#A8927B] hover:text-[#9CAF88] transition-colors duration-350 text-left flex items-center justify-between"
               >
                 <span>Account</span>
-                {user && <span className="text-xs text-[#9CAF88]">Signed in</span>}
+                {user && (
+                  <span className="text-xs text-[#9CAF88]">Signed in</span>
+                )}
               </button>
               <button
                 onClick={() => {

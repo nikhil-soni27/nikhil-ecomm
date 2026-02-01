@@ -1,5 +1,5 @@
-import React from 'react';
-import { Leaf, Heart, Users, Award } from 'lucide-react';
+import React from "react";
+import { Leaf, Heart, Users, Award } from "lucide-react";
 
 interface AboutProps {
   onNavigate: (page: string) => void;
@@ -14,7 +14,8 @@ export function About({ onNavigate }: AboutProps) {
             About Natura
           </h1>
           <p className="font-['Josefin_Sans'] text-lg md:text-xl leading-relaxed">
-            Connecting artisans with conscious consumers through handcrafted, sustainable goods
+            Connecting artisans with conscious consumers through handcrafted,
+            sustainable goods
           </p>
         </div>
       </div>
@@ -27,10 +28,17 @@ export function About({ onNavigate }: AboutProps) {
               Our Story
             </h2>
             <p className="font-['Lora'] text-base md:text-lg text-[#3A5A40]/80 leading-relaxed mb-4 md:mb-6">
-              Natura was born from a simple belief: that every handmade item tells a story, and every purchase can make a difference. Founded in 2020, we've been working tirelessly to create a marketplace that celebrates craftsmanship, sustainability, and the human connection behind every product.
+              Natura was born from a simple belief: that every handmade item
+              tells a story, and every purchase can make a difference. Founded
+              in 2020, we've been working tirelessly to create a marketplace
+              that celebrates craftsmanship, sustainability, and the human
+              connection behind every product.
             </p>
             <p className="font-['Lora'] text-base md:text-lg text-[#3A5A40]/80 leading-relaxed">
-              We partner with artisans from around the world who share our commitment to quality, ethics, and environmental responsibility. Each piece in our collection is carefully curated to ensure it meets our standards for craftsmanship and sustainability.
+              We partner with artisans from around the world who share our
+              commitment to quality, ethics, and environmental responsibility.
+              Each piece in our collection is carefully curated to ensure it
+              meets our standards for craftsmanship and sustainability.
             </p>
           </div>
           <div className="relative">
@@ -58,7 +66,8 @@ export function About({ onNavigate }: AboutProps) {
                 Sustainability
               </h3>
               <p className="font-['Lora'] text-sm md:text-base text-[#3A5A40]/80">
-                We prioritize eco-friendly materials and ethical production practices that respect our planet.
+                We prioritize eco-friendly materials and ethical production
+                practices that respect our planet.
               </p>
             </div>
             <div className="text-center">
@@ -69,7 +78,8 @@ export function About({ onNavigate }: AboutProps) {
                 Craftsmanship
               </h3>
               <p className="font-['Lora'] text-sm md:text-base text-[#3A5A40]/80">
-                Every item is handcrafted with care, skill, and attention to detail by talented artisans.
+                Every item is handcrafted with care, skill, and attention to
+                detail by talented artisans.
               </p>
             </div>
             <div className="text-center">
@@ -80,7 +90,8 @@ export function About({ onNavigate }: AboutProps) {
                 Community
               </h3>
               <p className="font-['Lora'] text-sm md:text-base text-[#3A5A40]/80">
-                We build meaningful connections between artisans, customers, and communities worldwide.
+                We build meaningful connections between artisans, customers, and
+                communities worldwide.
               </p>
             </div>
           </div>
@@ -109,7 +120,8 @@ export function About({ onNavigate }: AboutProps) {
                     Supporting 500+ Artisans
                   </h3>
                   <p className="font-['Lora'] text-sm md:text-base text-[#3A5A40]/80">
-                    We've helped over 500 artisans establish sustainable livelihoods through our platform.
+                    We've helped over 500 artisans establish sustainable
+                    livelihoods through our platform.
                   </p>
                 </div>
               </div>
@@ -120,7 +132,8 @@ export function About({ onNavigate }: AboutProps) {
                     Carbon Neutral Shipping
                   </h3>
                   <p className="font-['Lora'] text-sm md:text-base text-[#3A5A40]/80">
-                    All our shipping partners are committed to carbon-neutral delivery options.
+                    All our shipping partners are committed to carbon-neutral
+                    delivery options.
                   </p>
                 </div>
               </div>
@@ -131,7 +144,8 @@ export function About({ onNavigate }: AboutProps) {
                     Fair Trade Certified
                   </h3>
                   <p className="font-['Lora'] text-sm md:text-base text-[#3A5A40]/80">
-                    We ensure fair wages and ethical working conditions for all our partner artisans.
+                    We ensure fair wages and ethical working conditions for all
+                    our partner artisans.
                   </p>
                 </div>
               </div>
@@ -147,14 +161,15 @@ export function About({ onNavigate }: AboutProps) {
             Join Our Community
           </h2>
           <p className="font-['Josefin_Sans'] text-lg md:text-xl mb-6 md:mb-8">
-            Discover unique handcrafted items and support artisans making a difference.
+            Discover unique handcrafted items and support artisans making a
+            difference.
           </p>
           <button
-            onClick={() => onNavigate('shop-all')}
+            onClick={() => onNavigate("shop-all")}
             className="bg-[#D4703B] text-[#FFF8E7] px-6 md:px-8 py-3 md:py-4 rounded-lg font-['Josefin_Sans'] text-base md:text-lg font-medium hover:bg-[#F4ACB7] transition-colors duration-300 shadow-lg"
             style={{
-              border: '3px solid #FFF8E7',
-              borderRadius: '20px 5px 20px 5px'
+              border: "3px solid #FFF8E7",
+              borderRadius: "20px 5px 20px 5px",
             }}
           >
             Shop Our Collection →
