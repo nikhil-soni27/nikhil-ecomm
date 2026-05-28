@@ -8,7 +8,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'artisan_marketplace_secret_key_2026';
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : true,
+  credentials: true
+}));
 app.use(express.json());
 
 // Log incoming requests
@@ -160,6 +163,100 @@ app.post('/api/auth/login', (req, res) => {
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Server error during login' });
+  }
+});
+
+// Forgot Password: Check if email exists
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+    const user = db.users.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ error: 'No account found with this email address' });
+    }
+    res.json({ success: true, message: 'Email address verified' });
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ error: 'Server error checking email' });
+  }
+});
+
+// Reset Password: Update to new password
+app.post('/api/auth/reset-password', (req, res) => {
+  const { email, newPassword } = req.body;
+  if (!email || !newPassword) {
+    return res.status(400).json({ error: 'Email and new password are required' });
+  }
+
+  try {
+    const user = db.users.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Securely hash the new password
+    const salt = bcrypt.genSaltSync(10);
+    const passwordHash = bcrypt.hashSync(newPassword, salt);
+
+    // Update user in local database
+    db.users.updateOne({ email: email.toLowerCase() }, { passwordHash });
+
+    res.json({ success: true, message: 'Password reset successful' });
+  } catch (err) {
+    console.error('Reset password error:', err);
+    res.status(500).json({ error: 'Server error resetting password' });
+  }
+});
+
+// Google Authentication: Login or register simulated Google user
+app.post('/api/auth/google', (req, res) => {
+  const { name, email, googleId } = req.body;
+
+  if (!email || !googleId) {
+    return res.status(400).json({ error: 'Google authentication details are required' });
+  }
+
+  try {
+    let user = db.users.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      // If user doesn't exist, create a new customer account
+      const salt = bcrypt.genSaltSync(10);
+      const dummyPassword = Math.random().toString(36).substring(2, 15);
+      const passwordHash = bcrypt.hashSync(dummyPassword, salt);
+
+      user = db.users.insertOne({
+        name: name || email.split('@')[0],
+        email: email.toLowerCase(),
+        passwordHash,
+        isArtisan: false,
+        googleId
+      });
+    }
+
+    // Create JWT Token
+    const token = jwt.sign(
+      { id: user.id, email: user.email, isArtisan: user.isArtisan },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        isArtisan: user.isArtisan
+      },
+      token
+    });
+  } catch (err) {
+    console.error('Google auth error:', err);
+    res.status(500).json({ error: 'Server error during Google authentication' });
   }
 });
 

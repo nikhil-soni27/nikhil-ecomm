@@ -1,6 +1,8 @@
 import type { Product, CartItem, User } from '@/app/App';
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
 
 // Retrieve saved JWT token
 export const getToken = (): string | null => {
@@ -86,6 +88,29 @@ export const api = {
 
   logout: (): void => {
     removeToken();
+  },
+
+  forgotPassword: async (email: string): Promise<{ success: boolean; message: string }> => {
+    return apiFetch<{ success: boolean; message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  resetPassword: async (email: string, newPassword: string): Promise<{ success: boolean; message: string }> => {
+    return apiFetch<{ success: boolean; message: string }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ email, newPassword }),
+    });
+  },
+
+  googleLogin: async (name: string, email: string, googleId: string): Promise<{ user: User; token: string }> => {
+    const data = await apiFetch<{ user: User; token: string }>('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ name, email, googleId }),
+    });
+    setToken(data.token);
+    return data;
   },
 
   // --- Cart ---
