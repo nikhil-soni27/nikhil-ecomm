@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import type { User } from '@/app/App';
+import { api } from '@/app/utils/api';
+import { toast } from 'sonner';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -10,24 +12,40 @@ interface AuthModalProps {
 
 export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    isArtisan: false
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
     
-    // Mock authentication - In real app, this would call your backend
-    const user: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email: formData.email,
-      name: formData.name || formData.email.split('@')[0],
-      isArtisan: false
-    };
-
-    onSuccess(user);
+    try {
+      if (isLogin) {
+        const data = await api.login(formData.email, formData.password);
+        onSuccess(data.user);
+      } else {
+        const data = await api.register(
+          formData.name,
+          formData.email,
+          formData.password,
+          formData.isArtisan
+        );
+        onSuccess(data.user);
+      }
+    } catch (err: any) {
+      console.error('Auth error:', err);
+      setError(err.message || 'Authentication failed. Please try again.');
+      toast.error(err.message || 'Authentication failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -65,22 +83,69 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             </p>
           </div>
 
+          {/* Error Notice */}
+          {error && (
+            <div 
+              className="mb-6 p-4 bg-red-50 border-2 border-red-200 text-red-700 text-sm font-['Josefin_Sans']"
+              style={{ borderRadius: '12px 3px 12px 3px' }}
+            >
+              {error}
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
-                <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
-                  style={{ borderRadius: '12px 3px 12px 3px' }}
-                />
-              </div>
+              <>
+                <div>
+                  <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
+                    style={{ borderRadius: '12px 3px 12px 3px' }}
+                  />
+                </div>
+
+                {/* Role Selector (Customer vs Artisan) */}
+                <div>
+                  <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
+                    Account Type
+                  </label>
+                  <div className="flex space-x-4">
+                    <label className="flex items-center space-x-2 cursor-pointer bg-white px-4 py-2.5 rounded-lg border-2 border-[#3A5A40]/10 flex-1 hover:border-[#D4703B]/50 transition-colors"
+                           style={{ borderRadius: '12px 3px 12px 3px' }}>
+                      <input
+                        type="radio"
+                        name="isArtisan"
+                        checked={!formData.isArtisan}
+                        onChange={() => setFormData({ ...formData, isArtisan: false })}
+                        className="text-[#D4703B] focus:ring-[#D4703B] w-4 h-4 cursor-pointer"
+                      />
+                      <span className="font-['Josefin_Sans'] text-xs text-[#3A5A40] select-none">
+                        Customer
+                      </span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer bg-white px-4 py-2.5 rounded-lg border-2 border-[#3A5A40]/10 flex-1 hover:border-[#D4703B]/50 transition-colors"
+                           style={{ borderRadius: '12px 3px 12px 3px' }}>
+                      <input
+                        type="radio"
+                        name="isArtisan"
+                        checked={formData.isArtisan}
+                        onChange={() => setFormData({ ...formData, isArtisan: true })}
+                        className="text-[#D4703B] focus:ring-[#D4703B] w-4 h-4 cursor-pointer"
+                      />
+                      <span className="font-['Josefin_Sans'] text-xs text-[#3A5A40] select-none">
+                        Artisan
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </>
             )}
 
             <div>
@@ -133,13 +198,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
             <button
               type="submit"
-              className="w-full bg-[#D4703B] text-[#FFF8E7] px-8 py-4 rounded-lg font-['Josefin_Sans'] text-lg font-semibold hover:bg-[#3A5A40] transition-all duration-300 shadow-xl"
+              disabled={loading}
+              className={`w-full bg-[#D4703B] text-[#FFF8E7] px-8 py-4 rounded-lg font-['Josefin_Sans'] text-lg font-semibold hover:bg-[#3A5A40] transition-all duration-300 shadow-xl ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
               style={{
                 border: '3px solid #3A5A40',
                 borderRadius: '20px 5px 20px 5px'
               }}
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {loading ? (isLogin ? 'Signing In...' : 'Creating Account...') : (isLogin ? 'Sign In' : 'Create Account')}
             </button>
           </form>
 

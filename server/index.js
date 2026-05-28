@@ -1,0 +1,268 @@
+const express = require('express');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const db = require('./database');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'artisan_marketplace_secret_key_2026';
+
+app.use(cors());
+app.use(express.json());
+
+// Log incoming requests
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// Middleware: Authenticate JWT Token
+const authenticateJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized: No token provided' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded; // Contains id, email, isArtisan
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid or expired token' });
+  }
+};
+
+// Middleware: Require Artisan Role (RBAC)
+const requireArtisan = (req, res, next) => {
+  if (!req.user || req.user.isArtisan !== true) {
+    return res.status(403).json({ error: 'Forbidden: Access restricted to Artisans only' });
+  }
+  next();
+};
+
+// ==================== PUBLIC ROUTES ====================
+
+// Health Check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Express server running successfully' });
+});
+
+// Get All Products
+app.get('/api/products', (req, res) => {
+  try {
+    const products = db.products.find({});
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error retrieving products' });
+  }
+});
+
+// Get Single Product by ID
+app.get('/api/products/:id', (req, res) => {
+  try {
+    const product = db.products.findOne({ id: req.params.id });
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error retrieving product' });
+  }
+});
+
+// User Registration
+app.post('/api/auth/register', (req, res) => {
+  const { name, email, password, isArtisan } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    // Check if email already exists
+    const existingUser = db.users.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email is already registered' });
+    }
+
+    // Hash password securely with pure-JS bcryptjs
+    const salt = bcrypt.genSaltSync(10);
+    const passwordHash = bcrypt.hashSync(password, salt);
+
+    // Create User Document
+    const newUser = db.users.insertOne({
+      name: name || email.split('@')[0],
+      email: email.toLowerCase(),
+      passwordHash,
+      isArtisan: !!isArtisan
+    });
+
+    // Create JWT Token
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email, isArtisan: newUser.isArtisan },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.status(201).json({
+      user: {
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.name,
+        isArtisan: newUser.isArtisan
+      },
+      token
+    });
+  } catch (err) {
+    console.error('Registration error:', err);
+    res.status(500).json({ error: 'Server error during registration' });
+  }
+});
+
+// User Login
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    const user = db.users.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    // Validate password
+    const isPasswordValid = bcrypt.compareSync(password, user.passwordHash);
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    // Create JWT Token
+    const token = jwt.sign(
+      { id: user.id, email: user.email, isArtisan: user.isArtisan },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        isArtisan: user.isArtisan
+      },
+      token
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Server error during login' });
+  }
+});
+
+// ==================== AUTHENTICATED ROUTES ====================
+
+// Get Logged In User Profile (Restore Session)
+app.get('/api/auth/me', authenticateJWT, (req, res) => {
+  try {
+    const user = db.users.findOne({ id: req.user.id });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      isArtisan: user.isArtisan
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error fetching user profile' });
+  }
+});
+
+// Get User's Cart
+app.get('/api/cart', authenticateJWT, (req, res) => {
+  try {
+    const userCart = db.carts.findOne({ userId: req.user.id });
+    res.json(userCart ? userCart.items : []);
+  } catch (err) {
+    res.status(500).json({ error: 'Server error retrieving cart' });
+  }
+});
+
+// Sync/Save User's Cart
+app.post('/api/cart', authenticateJWT, (req, res) => {
+  const { items } = req.body;
+
+  if (!Array.isArray(items)) {
+    return res.status(400).json({ error: 'Cart items must be a valid array' });
+  }
+
+  try {
+    const existingCart = db.carts.findOne({ userId: req.user.id });
+    if (existingCart) {
+      db.carts.updateOne({ userId: req.user.id }, { items });
+    } else {
+      db.carts.insertOne({ userId: req.user.id, items });
+    }
+    res.json({ success: true, message: 'Cart synced successfully' });
+  } catch (err) {
+    console.error('Cart sync error:', err);
+    res.status(500).json({ error: 'Server error syncing cart' });
+  }
+});
+
+// ==================== ROLE-PROTECTED ROUTES (ARTISAN ONLY) ====================
+
+// Create New Product
+app.post('/api/products', authenticateJWT, requireArtisan, (req, res) => {
+  const productData = req.body;
+
+  // Basic validation
+  if (!productData.name || !productData.price) {
+    return res.status(400).json({ error: 'Product name and price are required' });
+  }
+
+  try {
+    const user = db.users.findOne({ id: req.user.id });
+
+    // Build complete Product object
+    const newProduct = db.products.insertOne({
+      name: productData.name,
+      price: Number(productData.price),
+      image: productData.image || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38',
+      artisan: {
+        name: user ? user.name : 'Unknown Artisan',
+        avatar: 'https://i.pravatar.cc/150?img=12', // generic avatar
+        id: req.user.id
+      },
+      description: productData.description || 'No description provided.',
+      materials: Array.isArray(productData.materials) ? productData.materials : [],
+      category: productData.category || 'Uncategorized',
+      rating: 5.0,
+      reviews: 0,
+      inStock: Number(productData.inStock) || 10,
+      customizable: !!productData.customizable,
+      images: [productData.image || 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38'],
+      location: productData.location || 'Asheville, NC'
+    });
+
+    res.status(201).json(newProduct);
+  } catch (err) {
+    console.error('Create product error:', err);
+    res.status(500).json({ error: 'Server error creating product' });
+  }
+});
+
+// Start Server
+app.listen(PORT, () => {
+  console.log(`===============================================`);
+  console.log(`🚀 Artisan Marketplace Backend is running!`);
+  console.log(`🌐 API Server: http://localhost:${PORT}`);
+  console.log(`📌 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`===============================================`);
+});
