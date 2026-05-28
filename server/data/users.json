@@ -6,5 +6,14 @@
     "passwordHash": "$2a$10$1ZJnwJH7p9b4EEVR2uFiu.GwOWjFfKLWoitB1uzZZEyh4mmnWgP8G",
     "isArtisan": false,
     "createdAt": "2026-05-27T20:21:05.962Z"
+  },
+  {
+    "id": "wszbw30t0",
+    "name": "James Cooper",
+    "email": "james.cooper@gmail.com",
+    "passwordHash": "$2a$10$rEMgENpEeTJevF1JvuTwVuCbaa4XyjoPcY8uOI2IDYGMookS7uY4u",
+    "isArtisan": false,
+    "googleId": "google-pjd9lnm1y",
+    "createdAt": "2026-05-28T18:30:08.369Z"
   }
 ]
