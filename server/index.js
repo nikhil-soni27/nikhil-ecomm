@@ -10,7 +10,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'artisan_marketplace_secret_key_202
 
 // Always allow localhost for local development; add deployed frontend URLs via FRONTEND_URL env var
 app.use(cors({
-  origin: true,
+  origin: [
+    "http://localhost:5173",
+    "https://nikhil-ecomm.vercel.app"  // your actual Vercel URL
+  ],
   credentials: true
 }));
 app.use(express.json());
