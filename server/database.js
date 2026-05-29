@@ -1,14 +1,14 @@
-const fs = require('fs');
-const path = require('path');
+const { MongoClient } = require('mongodb');
+require('dotenv').config();
 
-const DATA_DIR = path.join(__dirname, 'data');
+// MongoDB connection string from environment
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/artisan_marketplace';
+const DB_NAME = 'artisan_marketplace';
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
+let client = null;
+let db = null;
 
-// Initial products mock data to seed the database
+// Initial products seed data
 const initialProducts = [
   {
     id: "1",
@@ -189,119 +189,84 @@ const initialProducts = [
   }
 ];
 
-class Collection {
-  constructor(name) {
-    this.name = name;
-    this.filePath = path.join(DATA_DIR, `${name}.json`);
-    this.init();
-  }
-
-  init() {
-    if (!fs.existsSync(this.filePath)) {
-      const defaultData = this.name === 'products' ? initialProducts : [];
-      fs.writeFileSync(this.filePath, JSON.stringify(defaultData, null, 2), 'utf8');
-    }
-  }
-
-  read() {
-    try {
-      const content = fs.readFileSync(this.filePath, 'utf8');
-      return JSON.parse(content);
-    } catch (err) {
-      console.error(`Error reading database file ${this.filePath}:`, err);
-      return [];
-    }
-  }
-
-  write(data) {
-    try {
-      fs.writeFileSync(this.filePath, JSON.stringify(data, null, 2), 'utf8');
-      return true;
-    } catch (err) {
-      console.error(`Error writing database file ${this.filePath}:`, err);
-      return false;
-    }
-  }
-
-  find(query = {}) {
-    const data = this.read();
-    return data.filter(item => {
-      for (const key in query) {
-        if (item[key] !== query[key]) {
-          return false;
-        }
-      }
-      return true;
+/**
+ * Connect to MongoDB and return the database instance.
+ * Seeds the products collection if it's empty.
+ */
+async function connectDB() {
+  try {
+    client = new MongoClient(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000, // Fail fast if MongoDB isn't reachable
+      connectTimeoutMS: 5000,
     });
-  }
+    await client.connect();
+    db = client.db(DB_NAME);
 
-  findOne(query = {}) {
-    const data = this.read();
-    return data.find(item => {
-      for (const key in query) {
-        if (item[key] !== query[key]) {
-          return false;
-        }
-      }
-      return true;
-    }) || null;
-  }
+    // Verify connection with a ping
+    await db.command({ ping: 1 });
+    console.log('✅ Connected to MongoDB successfully');
 
-  insertOne(document) {
-    const data = this.read();
-    const newDoc = {
-      id: document.id || Math.random().toString(36).substring(2, 11),
-      ...document,
-      createdAt: new Date().toISOString()
-    };
-    data.push(newDoc);
-    this.write(data);
-    return newDoc;
-  }
-
-  updateOne(query, updates) {
-    const data = this.read();
-    const index = data.findIndex(item => {
-      for (const key in query) {
-        if (item[key] !== query[key]) {
-          return false;
-        }
-      }
-      return true;
-    });
-
-    if (index !== -1) {
-      data[index] = { ...data[index], ...updates, updatedAt: new Date().toISOString() };
-      this.write(data);
-      return data[index];
+    // Seed products if collection is empty
+    const productsCount = await db.collection('products').countDocuments();
+    if (productsCount === 0) {
+      await db.collection('products').insertMany(initialProducts);
+      console.log(`🌱 Seeded ${initialProducts.length} initial products`);
+    } else {
+      console.log(`📦 Products collection already has ${productsCount} documents`);
     }
-    return null;
-  }
 
-  deleteOne(query) {
-    const data = this.read();
-    const index = data.findIndex(item => {
-      for (const key in query) {
-        if (item[key] !== query[key]) {
-          return false;
-        }
-      }
-      return true;
-    });
+    // Create indexes for faster lookups
+    await db.collection('users').createIndex({ email: 1 }, { unique: true });
+    await db.collection('users').createIndex({ id: 1 }, { unique: true });
+    await db.collection('products').createIndex({ id: 1 }, { unique: true });
+    await db.collection('carts').createIndex({ userId: 1 }, { unique: true });
+    console.log('📇 Database indexes ensured');
 
-    if (index !== -1) {
-      const deletedItem = data.splice(index, 1)[0];
-      this.write(data);
-      return deletedItem;
-    }
-    return null;
+    return db;
+  } catch (err) {
+    console.error('❌ MongoDB connection error:', err.message);
+    console.error('');
+    console.error('💡 Make sure MongoDB is running and your connection string is correct.');
+    console.error(`   Current MONGODB_URI: ${MONGODB_URI.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@')}`);
+    console.error('');
+    console.error('   Options:');
+    console.error('   1. Install MongoDB locally: https://www.mongodb.com/docs/manual/installation/');
+    console.error('   2. Use MongoDB Atlas (free): https://www.mongodb.com/atlas');
+    console.error('      Then update MONGODB_URI in server/.env');
+    process.exit(1);
   }
 }
 
-const db = {
-  products: new Collection('products'),
-  users: new Collection('users'),
-  carts: new Collection('carts')
-};
+/**
+ * Get the connected database instance.
+ * Throws if connectDB() hasn't been called yet.
+ */
+function getDB() {
+  if (!db) {
+    throw new Error('Database not initialized. Call connectDB() first.');
+  }
+  return db;
+}
 
-module.exports = db;
+/**
+ * Close the MongoDB connection gracefully.
+ */
+async function closeDB() {
+  if (client) {
+    await client.close();
+    console.log('🔌 MongoDB connection closed');
+  }
+}
+
+// Graceful shutdown handlers
+process.on('SIGINT', async () => {
+  await closeDB();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await closeDB();
+  process.exit(0);
+});
+
+module.exports = { connectDB, getDB, closeDB };
