@@ -16,6 +16,7 @@ import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { Toaster } from "@/app/components/ui/sonner";
 import { toast } from "sonner";
 import { Heart } from "lucide-react";
+import { PacmanLoader } from "react-spinners";
 
 export interface Product {
   id: string;
@@ -79,15 +80,18 @@ function App() {
   // Dynamic products and loading states
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [errorProducts, setErrorProducts] = useState<string | null>(null);
 
   // Fetch all products from Express backend
   const fetchProducts = async () => {
     try {
       setLoadingProducts(true);
+      setErrorProducts(null);
       const data = await api.getProducts();
       setProducts(data);
     } catch (err: any) {
       console.error("Failed to load products from API:", err);
+      setErrorProducts(err.message || "Failed to load products");
       toast.error("Could not load products. Please check if the Express backend is running.");
     } finally {
       setLoadingProducts(false);
@@ -247,6 +251,39 @@ function App() {
   );
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
+  const renderProductContent = (content: React.ReactNode) => {
+    if (loadingProducts) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[40vh] py-20">
+          <PacmanLoader color="#3A5A40" size={25} />
+          <p className="mt-8 font-['Josefin_Sans'] text-lg text-[#3A5A40]">
+            Loading handcrafted treasures...
+          </p>
+        </div>
+      );
+    }
+
+    if (errorProducts) {
+      return (
+        <div className="text-center py-20 min-h-[40vh] flex flex-col justify-center">
+          <p className="font-['Amatic_SC'] text-4xl text-[#D4703B] mb-2">Failed to load products</p>
+          <p className="font-['Josefin_Sans'] text-lg text-[#3A5A40]/80">{errorProducts}</p>
+        </div>
+      );
+    }
+
+    if (products.length === 0) {
+      return (
+        <div className="text-center py-20 min-h-[40vh] flex flex-col justify-center">
+          <p className="font-['Amatic_SC'] text-4xl text-[#3A5A40] mb-2">No products found</p>
+          <p className="font-['Josefin_Sans'] text-lg text-[#3A5A40]/80">Check back later for new arrivals!</p>
+        </div>
+      );
+    }
+
+    return content;
+  };
+
   return (
     <div className="min-h-screen bg-[#FFF8E7]">
       <Navigation
@@ -281,155 +318,161 @@ function App() {
               </p>
             </div>
 
-            {/* Full-width featured products - first 3 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              {products.slice(0, 3).map((product) => (
-                <div
-                  key={product.id}
-                  className="relative bg-[#FAF7F2] rounded-xl overflow-hidden hover:shadow-lg transition-all duration-350 cursor-pointer group"
-                  style={{
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-                  }}
-                  onClick={() => handleProductClick(product)}
-                >
-                  {/* Product Image - Full width */}
-                  <div className="relative overflow-hidden bg-[#FAF7F2]">
-                    <ImageWithFallback
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-80 md:h-96 object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-
-                    {/* Product Badges */}
-                    <div className="absolute top-3 left-3 z-10 flex flex-col space-y-1">
-                      {["Organic", "Handmade"].map((badge, index) => (
-                        <span
-                          key={index}
-                          className="bg-[#9CAF88] text-[#FAF7F2] px-2.5 py-1 rounded-full font-['Lora'] text-[10px] font-medium shadow-sm"
-                        >
-                          {badge}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Wishlist Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleWishlist(product.id);
+            {renderProductContent(
+              <>
+                {/* Full-width featured products - first 3 */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                  {products.slice(0, 3).map((product) => (
+                    <div
+                      key={product.id}
+                      className="relative bg-[#FAF7F2] rounded-xl overflow-hidden hover:shadow-lg transition-all duration-350 cursor-pointer group"
+                      style={{
+                        boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
                       }}
-                      className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-[#FAF7F2] transition-colors duration-350"
+                      onClick={() => handleProductClick(product)}
                     >
-                      <Heart
-                        size={18}
-                        className={
-                          wishlist.includes(product.id)
-                            ? "fill-[#C77956] text-[#C77956]"
-                            : "text-[#A8927B]"
-                        }
-                      />
-                    </button>
-
-                    {/* Low stock badge */}
-                    {product.inStock <= 3 && (
-                      <div className="absolute bottom-3 left-3 bg-[#C77956] text-[#FAF7F2] px-3 py-1.5 rounded-lg shadow-md">
-                        <p className="font-['Lora'] text-xs font-medium">
-                          Only {product.inStock} left
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleArtisanClick(product.artisan.id);
-                        }}
-                        className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-                      >
-                        <img
-                          src={product.artisan.avatar}
-                          alt={product.artisan.name}
-                          className="w-6 h-6 rounded-full"
+                      {/* Product Image - Full width */}
+                      <div className="relative overflow-hidden bg-[#FAF7F2]">
+                        <ImageWithFallback
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-80 md:h-96 object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        <span className="font-['Lora'] text-xs text-[#A8927B]">
-                          {product.artisan.name}
-                        </span>
-                      </button>
-                      <div className="flex items-center space-x-1">
-                        <span className="text-yellow-400">★</span>
-                        <span className="font-['Lora'] text-xs text-[#A8927B]">
-                          {product.rating} ({product.reviews})
-                        </span>
+
+                        {/* Product Badges */}
+                        <div className="absolute top-3 left-3 z-10 flex flex-col space-y-1">
+                          {["Organic", "Handmade"].map((badge, index) => (
+                            <span
+                              key={index}
+                              className="bg-[#9CAF88] text-[#FAF7F2] px-2.5 py-1 rounded-full font-['Lora'] text-[10px] font-medium shadow-sm"
+                            >
+                              {badge}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Wishlist Button */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleWishlist(product.id);
+                          }}
+                          className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-[#FAF7F2] transition-colors duration-350"
+                        >
+                          <Heart
+                            size={18}
+                            className={
+                              wishlist.includes(product.id)
+                                ? "fill-[#C77956] text-[#C77956]"
+                                : "text-[#A8927B]"
+                            }
+                          />
+                        </button>
+
+                        {/* Low stock badge */}
+                        {product.inStock <= 3 && (
+                          <div className="absolute bottom-3 left-3 bg-[#C77956] text-[#FAF7F2] px-3 py-1.5 rounded-lg shadow-md">
+                            <p className="font-['Lora'] text-xs font-medium">
+                              Only {product.inStock} left
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Product Info */}
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleArtisanClick(product.artisan.id);
+                            }}
+                            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                          >
+                            <img
+                              src={product.artisan.avatar}
+                              alt={product.artisan.name}
+                              className="w-6 h-6 rounded-full"
+                            />
+                            <span className="font-['Lora'] text-xs text-[#A8927B]">
+                              {product.artisan.name}
+                            </span>
+                          </button>
+                          <div className="flex items-center space-x-1">
+                            <span className="text-yellow-400">★</span>
+                            <span className="font-['Lora'] text-xs text-[#A8927B]">
+                              {product.rating} ({product.reviews})
+                            </span>
+                          </div>
+                        </div>
+
+                        <h3 className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#3A5A40] mb-2 line-clamp-2">
+                          {product.name}
+                        </h3>
+
+                        <p className="font-['Lora'] text-sm text-[#3A5A40]/70 mb-4 line-clamp-2">
+                          {product.description}
+                        </p>
+
+                        <div className="flex items-center justify-between">
+                          <span className="font-['Cormorant_Garamond'] text-2xl font-bold text-[#C77956]">
+                            ${product.price}
+                          </span>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addToCart(product);
+                            }}
+                            className="bg-[#9CAF88] text-[#FAF7F2] px-4 py-2 rounded-lg font-['Lora'] text-sm font-medium hover:bg-[#C77956] transition-colors duration-300"
+                          >
+                            Add to Cart
+                          </button>
+                        </div>
                       </div>
                     </div>
-
-                    <h3 className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#3A5A40] mb-2 line-clamp-2">
-                      {product.name}
-                    </h3>
-
-                    <p className="font-['Lora'] text-sm text-[#3A5A40]/70 mb-4 line-clamp-2">
-                      {product.description}
-                    </p>
-
-                    <div className="flex items-center justify-between">
-                      <span className="font-['Cormorant_Garamond'] text-2xl font-bold text-[#C77956]">
-                        ${product.price}
-                      </span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(product);
-                        }}
-                        className="bg-[#9CAF88] text-[#FAF7F2] px-4 py-2 rounded-lg font-['Lora'] text-sm font-medium hover:bg-[#C77956] transition-colors duration-300"
-                      >
-                        Add to Cart
-                      </button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* Remaining products in grid */}
-            <ProductGrid
-              products={products.slice(3, 6)}
-              onProductClick={handleProductClick}
-              onArtisanClick={handleArtisanClick}
-              onAddToCart={addToCart}
-              wishlist={wishlist}
-              onToggleWishlist={toggleWishlist}
-            />
-            <div className="text-center mt-12">
-              <button
-                onClick={() => setCurrentPage("shop")}
-                className="bg-[#D4703B] text-[#FFF8E7] px-8 py-4 rounded-lg font-['Josefin_Sans'] text-lg font-medium hover:bg-[#F4ACB7] transition-colors duration-300 shadow-lg relative"
-                style={{
-                  border: "3px solid #3A5A40",
-                  borderRadius: "20px 5px 20px 5px",
-                }}
-              >
-                Explore All Unique Finds →
-              </button>
-            </div>
+                {/* Remaining products in grid */}
+                <ProductGrid
+                  products={products.slice(3, 6)}
+                  onProductClick={handleProductClick}
+                  onArtisanClick={handleArtisanClick}
+                  onAddToCart={addToCart}
+                  wishlist={wishlist}
+                  onToggleWishlist={toggleWishlist}
+                />
+                <div className="text-center mt-12">
+                  <button
+                    onClick={() => setCurrentPage("shop")}
+                    className="bg-[#D4703B] text-[#FFF8E7] px-8 py-4 rounded-lg font-['Josefin_Sans'] text-lg font-medium hover:bg-[#F4ACB7] transition-colors duration-300 shadow-lg relative"
+                    style={{
+                      border: "3px solid #3A5A40",
+                      borderRadius: "20px 5px 20px 5px",
+                    }}
+                  >
+                    Explore All Unique Finds →
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </>
       )}
 
       {currentPage === "shop" && (
         <div className="w-full md:max-w-7xl md:mx-auto px-2 md:px-4 py-8">
-          <ProductGrid
-            products={products}
-            onProductClick={handleProductClick}
-            onArtisanClick={handleArtisanClick}
-            onAddToCart={addToCart}
-            wishlist={wishlist}
-            onToggleWishlist={toggleWishlist}
-            showFilters={true}
-          />
+          {renderProductContent(
+            <ProductGrid
+              products={products}
+              onProductClick={handleProductClick}
+              onArtisanClick={handleArtisanClick}
+              onAddToCart={addToCart}
+              wishlist={wishlist}
+              onToggleWishlist={toggleWishlist}
+              showFilters={true}
+            />
+          )}
         </div>
       )}
 
@@ -443,15 +486,17 @@ function App() {
               Discover our complete collection of handcrafted treasures
             </p>
           </div>
-          <ProductGrid
-            products={products}
-            onProductClick={handleProductClick}
-            onArtisanClick={handleArtisanClick}
-            onAddToCart={addToCart}
-            wishlist={wishlist}
-            onToggleWishlist={toggleWishlist}
-            showFilters={true}
-          />
+          {renderProductContent(
+            <ProductGrid
+              products={products}
+              onProductClick={handleProductClick}
+              onArtisanClick={handleArtisanClick}
+              onAddToCart={addToCart}
+              wishlist={wishlist}
+              onToggleWishlist={toggleWishlist}
+              showFilters={true}
+            />
+          )}
         </div>
       )}
 
