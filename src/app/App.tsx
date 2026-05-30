@@ -255,7 +255,7 @@ function App() {
     if (loadingProducts) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[40vh] py-20">
-          <PulseLoader color="#3A5A40" size={25} />
+          <PulseLoader color="#4F6F52" size={20} />
           <p className="mt-8 font-['Josefin_Sans'] text-lg text-[#3A5A40]">
             Loading handcrafted treasures...
           </p>
