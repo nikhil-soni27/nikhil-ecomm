@@ -16,7 +16,7 @@ import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import { Toaster } from "@/app/components/ui/sonner";
 import { toast } from "sonner";
 import { Heart } from "lucide-react";
-import { PacmanLoader } from "react-spinners";
+import { PulseLoader } from "react-spinners";
 
 export interface Product {
   id: string;
@@ -255,7 +255,7 @@ function App() {
     if (loadingProducts) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[40vh] py-20">
-          <PacmanLoader color="#3A5A40" size={25} />
+          <PulseLoader color="#3A5A40" size={25} />
           <p className="mt-8 font-['Josefin_Sans'] text-lg text-[#3A5A40]">
             Loading handcrafted treasures...
           </p>
