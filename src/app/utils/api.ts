@@ -86,7 +86,12 @@ export const api = {
     return apiFetch<User>('/auth/me');
   },
 
-  logout: (): void => {
+  logout: async (): Promise<void> => {
+    try {
+      await apiFetch('/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.error('Logout failed on server', e);
+    }
     removeToken();
   },
 

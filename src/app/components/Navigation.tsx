@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Heart, ShoppingBag, User, Search, Menu, X, Leaf } from "lucide-react";
+import { Heart, ShoppingBag, User, Search, Menu, X, Leaf, LogOut } from "lucide-react";
 import type { User as UserType } from "@/app/App";
 
 interface NavigationProps {
@@ -15,6 +15,7 @@ interface NavigationProps {
   user: UserType | null;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onLogout?: () => void;
 }
 
 export function Navigation({
@@ -30,6 +31,7 @@ export function Navigation({
   user,
   searchQuery,
   onSearchChange,
+  onLogout,
 }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -109,12 +111,23 @@ export function Navigation({
             <button
               onClick={onAccountClick}
               className="text-[#9CAF88] hover:text-[#C77956] transition-colors duration-350 relative hidden md:block"
+              title={user ? "Account Dashboard" : "Sign In"}
             >
               <User size={22} strokeWidth={2} />
               {user && (
                 <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#9CAF88] rounded-full"></span>
               )}
             </button>
+
+            {user && onLogout && (
+              <button
+                onClick={onLogout}
+                className="text-[#9CAF88] hover:text-[#C77956] transition-colors duration-350 relative hidden md:block"
+                title="Logout"
+              >
+                <LogOut size={22} strokeWidth={2} />
+              </button>
+            )}
 
             <button
               onClick={onAccountClick}
@@ -208,6 +221,17 @@ export function Navigation({
                   <span className="text-xs text-[#9CAF88]">Signed in</span>
                 )}
               </button>
+              {user && onLogout && (
+                <button
+                  onClick={() => {
+                    onLogout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="font-['Lora'] text-sm text-[#D4703B] hover:text-[#C77956] transition-colors duration-350 text-left flex items-center justify-between"
+                >
+                  <span>Logout</span>
+                </button>
+              )}
               <button
                 onClick={() => {
                   onAccountClick();

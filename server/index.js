@@ -181,6 +181,13 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// User Logout
+app.post('/api/auth/logout', (req, res) => {
+  // In a stateless JWT system, we just send a success message to the client
+  // so it can clear its local token and acknowledge the API call.
+  res.json({ success: true, message: 'Logged out successfully' });
+});
+
 // Forgot Password: Check if email exists
 app.post('/api/auth/forgot-password', async (req, res) => {
   const { email } = req.body;

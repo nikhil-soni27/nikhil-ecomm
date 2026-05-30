@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, Package, Heart, User as UserIcon, Plus } from 'lucide-react';
+import { ChevronLeft, Package, Heart, User as UserIcon, Plus, LogOut } from 'lucide-react';
 import type { User, Product } from '@/app/App';
 import { ProductCard } from '@/app/components/ProductCard';
 import { toast } from 'sonner';
@@ -12,6 +12,7 @@ interface UserDashboardProps {
   onToggleWishlist: (productId: string) => void;
   onProductClick: (product: Product) => void;
   onAddProduct?: (productData: Partial<Product>) => Promise<Product>;
+  onLogout?: () => void;
 }
 
 export function UserDashboard({
@@ -21,7 +22,8 @@ export function UserDashboard({
   wishlist,
   onToggleWishlist,
   onProductClick,
-  onAddProduct
+  onAddProduct,
+  onLogout
 }: UserDashboardProps) {
   const [activeTab, setActiveTab] = React.useState<'orders' | 'wishlist' | 'manage-products'>('orders');
   const [showAddForm, setShowAddForm] = useState(false);
@@ -114,7 +116,7 @@ export function UserDashboard({
         </button>
 
         {/* Header */}
-        <div className="bg-white p-8 rounded-3xl shadow-xl mb-8"
+        <div className="bg-white p-8 rounded-3xl shadow-xl mb-8 flex items-center justify-between"
              style={{
                border: '3px solid #D4703B',
                borderRadius: '30px 10px 30px 10px'
@@ -132,6 +134,19 @@ export function UserDashboard({
               </p>
             </div>
           </div>
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="flex items-center space-x-2 bg-[#F4ACB7]/30 text-[#3A5A40] px-6 py-3 rounded-lg font-['Josefin_Sans'] font-medium hover:bg-[#F4ACB7] transition-colors duration-300 shadow-md"
+              style={{
+                border: '2px solid #3A5A40',
+                borderRadius: '15px 5px 15px 5px'
+              }}
+            >
+              <LogOut size={20} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          )}
         </div>
 
         {/* Tabs */}
@@ -236,7 +251,9 @@ export function UserDashboard({
                     </div>
                   </div>
                   
-                  <button className="bg-[#F4ACB7]/30 text-[#3A5A40] px-6 py-2 rounded-lg font-['Josefin_Sans'] text-sm font-medium hover:bg-[#F4ACB7] transition-colors duration-300"
+                  <button 
+                          onClick={() => toast.info(`Viewing details for Order #${order.id}`, { description: 'This feature is currently a mock and will be fully implemented soon.' })}
+                          className="bg-[#F4ACB7]/30 text-[#3A5A40] px-6 py-2 rounded-lg font-['Josefin_Sans'] text-sm font-medium hover:bg-[#F4ACB7] transition-colors duration-300"
                           style={{ borderRadius: '12px 3px 12px 3px' }}>
                     View Details
                   </button>

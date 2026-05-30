@@ -229,6 +229,18 @@ function App() {
     setCurrentPage("artisan");
   };
 
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+    } catch (err) {
+      console.error(err);
+    }
+    setUser(null);
+    setCurrentPage("home");
+    setCart([]);
+    toast.success("Successfully logged out");
+  };
+
   const cartTotal = cart.reduce(
     (total, item) => total + item.price * item.quantity,
     0,
@@ -252,6 +264,7 @@ function App() {
         user={user}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        onLogout={handleLogout}
       />
 
       {currentPage === "home" && (
@@ -472,6 +485,7 @@ function App() {
           onToggleWishlist={toggleWishlist}
           onProductClick={handleProductClick}
           onAddProduct={handleAddProduct}
+          onLogout={handleLogout}
         />
       )}
 
