@@ -104,98 +104,80 @@ export function UserDashboard({
   ];
 
   return (
-    <div className="min-h-screen bg-[#FFF8E7] py-8">
+    <div className="min-h-screen bg-[#FAF3E8] py-10">
       <div className="max-w-7xl mx-auto px-4">
         {/* Back Button */}
         <button
           onClick={onBackClick}
-          className="flex items-center space-x-2 mb-8 text-[#3A5A40] hover:text-[#D4703B] transition-colors duration-300"
+          className="flex items-center space-x-2 mb-8 text-[#3A5A40] hover:text-[#9CAF88] transition-colors duration-300"
         >
           <ChevronLeft size={20} />
-          <span className="font-['Josefin_Sans'] text-sm">Back to Home</span>
+          <span className="text-sm tracking-[0.12em] uppercase text-[#A8927B]">Back to Home</span>
         </button>
 
         {/* Header */}
-        <div className="bg-white p-8 rounded-3xl shadow-xl mb-8 flex items-center justify-between"
-             style={{
-               border: '3px solid #D4703B',
-               borderRadius: '30px 10px 30px 10px'
-             }}>
-          <div className="flex items-center space-x-6">
-            <div className="w-20 h-20 bg-[#D4703B] rounded-full flex items-center justify-center">
-              <UserIcon size={40} className="text-[#FFF8E7]" />
+        <div className="bg-[#FAF7F2] p-8 rounded-[32px] shadow-[0_28px_80px_rgba(71,56,38,0.12)] mb-8 ring-1 ring-[#A8927B]/20">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center gap-5">
+              <div className="w-20 h-20 rounded-[28px] bg-[#9CAF88]/15 flex items-center justify-center text-[#3A5A40] shadow-sm ring-1 ring-[#A8927B]/15">
+                <UserIcon size={40} />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-[#A8927B]">Artisan Marketplace</p>
+                <h1 className="mt-3 text-4xl font-semibold text-[#3A5A40] font-['Cormorant_Garamond']">
+                  Welcome, {user.name}!
+                </h1>
+                <p className="mt-2 text-sm text-[#6B5E4E]">{user.email}</p>
+              </div>
             </div>
-            <div>
-              <h1 className="font-['Amatic_SC'] text-5xl font-bold text-[#3A5A40] mb-2">
-                Welcome, {user.name}!
-              </h1>
-              <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40]/70">
-                {user.email}
-              </p>
-            </div>
+
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="inline-flex items-center gap-2 rounded-[20px] border border-[#A8927B]/25 bg-white px-6 py-3 text-sm font-medium text-[#3A5A40] shadow-sm transition hover:border-[#9CAF88] hover:bg-[#FAF7F2]"
+              >
+                <LogOut size={20} />
+                <span>Logout</span>
+              </button>
+            )}
           </div>
-          {onLogout && (
-            <button
-              onClick={onLogout}
-              className="flex items-center space-x-2 bg-[#F4ACB7]/30 text-[#3A5A40] px-6 py-3 rounded-lg font-['Josefin_Sans'] font-medium hover:bg-[#F4ACB7] transition-colors duration-300 shadow-md"
-              style={{
-                border: '2px solid #3A5A40',
-                borderRadius: '15px 5px 15px 5px'
-              }}
-            >
-              <LogOut size={20} />
-              <span className="hidden sm:inline">Logout</span>
-            </button>
-          )}
         </div>
 
         {/* Tabs */}
-        <div className="flex space-x-4 mb-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center mb-8">
           <button
             onClick={() => setActiveTab('orders')}
-            className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-['Josefin_Sans'] font-medium transition-all duration-300 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition ${
               activeTab === 'orders'
-                ? 'bg-[#D4703B] text-[#FFF8E7] shadow-lg'
-                : 'bg-white text-[#3A5A40] hover:bg-[#F4ACB7]/30'
+                ? 'bg-[#9CAF88] text-[#FAF7F2] shadow-md'
+                : 'bg-white text-[#3A5A40] ring-1 ring-[#A8927B]/15 hover:bg-[#F4E9DC]'
             }`}
-            style={{
-              border: '2px solid #3A5A40',
-              borderRadius: '15px 5px 15px 5px'
-            }}
           >
-            <Package size={20} />
+            <Package size={18} />
             <span>My Orders</span>
           </button>
           <button
             onClick={() => setActiveTab('wishlist')}
-            className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-['Josefin_Sans'] font-medium transition-all duration-300 ${
+            className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition ${
               activeTab === 'wishlist'
-                ? 'bg-[#D4703B] text-[#FFF8E7] shadow-lg'
-                : 'bg-white text-[#3A5A40] hover:bg-[#F4ACB7]/30'
+                ? 'bg-[#9CAF88] text-[#FAF7F2] shadow-md'
+                : 'bg-white text-[#3A5A40] ring-1 ring-[#A8927B]/15 hover:bg-[#F4E9DC]'
             }`}
-            style={{
-              border: '2px solid #3A5A40',
-              borderRadius: '15px 5px 15px 5px'
-            }}
           >
-            <Heart size={20} />
+            <Heart size={18} />
             <span>Wishlist ({wishlist.length})</span>
           </button>
 
           {user.isArtisan && (
             <button
               onClick={() => setActiveTab('manage-products')}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-['Josefin_Sans'] font-medium transition-all duration-300 ${
+              className={`flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition ${
                 activeTab === 'manage-products'
-                  ? 'bg-[#D4703B] text-[#FFF8E7] shadow-lg'
-                  : 'bg-white text-[#3A5A40] hover:bg-[#F4ACB7]/30'
+                  ? 'bg-[#9CAF88] text-[#FAF7F2] shadow-md'
+                  : 'bg-white text-[#3A5A40] ring-1 ring-[#A8927B]/15 hover:bg-[#F4E9DC]'
               }`}
-              style={{
-                border: '2px solid #3A5A40',
-                borderRadius: '15px 5px 15px 5px'
-              }}
             >
-              <Package size={20} />
+              <Package size={18} />
               <span>Manage My Products</span>
             </button>
           )}
@@ -207,30 +189,19 @@ export function UserDashboard({
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="bg-white p-6 rounded-xl shadow-lg"
-                style={{
-                  border: '2px solid #3A5A40/20',
-                  borderRadius: '20px 5px 20px 5px'
-                }}
+                className="bg-white/95 p-6 rounded-[28px] shadow-[0_24px_60px_rgba(71,56,38,0.12)] border border-[#A8927B]/10"
               >
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
                   <div>
-                    <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40]/70">
-                      Order #{order.id}
-                    </p>
-                    <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40]/70">
-                      {order.date}
-                    </p>
+                    <p className="text-xs uppercase tracking-[0.25em] text-[#A8927B]">Order #{order.id}</p>
+                    <p className="mt-2 text-sm text-[#6B5E4E]">{order.date}</p>
                   </div>
-                  <div className={`px-4 py-2 rounded-full ${
+                  <div className={`inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold ${
                     order.status === 'Delivered'
-                      ? 'bg-[#3A5A40]/20 text-[#3A5A40]'
-                      : 'bg-[#D4703B]/20 text-[#D4703B]'
-                  }`}
-                       style={{ borderRadius: '20px 5px 20px 5px' }}>
-                    <p className="font-['Josefin_Sans'] text-sm font-semibold">
-                      {order.status}
-                    </p>
+                      ? 'bg-[#9CAF88]/15 text-[#3A5A40]'
+                      : 'bg-[#C77956]/15 text-[#A35A36]'
+                  }`}>
+                    {order.status}
                   </div>
                 </div>
                 
@@ -251,10 +222,10 @@ export function UserDashboard({
                     </div>
                   </div>
                   
-                  <button 
-                          onClick={() => toast.info(`Viewing details for Order #${order.id}`, { description: 'This feature is currently a mock and will be fully implemented soon.' })}
-                          className="bg-[#F4ACB7]/30 text-[#3A5A40] px-6 py-2 rounded-lg font-['Josefin_Sans'] text-sm font-medium hover:bg-[#F4ACB7] transition-colors duration-300"
-                          style={{ borderRadius: '12px 3px 12px 3px' }}>
+                  <button
+                    onClick={() => toast.info(`Viewing details for Order #${order.id}`, { description: 'This feature is currently a mock and will be fully implemented soon.' })}
+                    className="inline-flex items-center justify-center rounded-full bg-[#FAF7F2] px-6 py-3 text-sm font-semibold text-[#3A5A40] ring-1 ring-[#A8927B]/20 transition hover:bg-[#F4E9DC]"
+                  >
                     View Details
                   </button>
                 </div>
@@ -262,14 +233,10 @@ export function UserDashboard({
             ))}
 
             {orders.length === 0 && (
-              <div className="text-center py-20">
-                <Package size={64} className="mx-auto text-[#D4703B] mb-4" />
-                <p className="font-['Amatic_SC'] text-3xl text-[#3A5A40] mb-2">
-                  No orders yet
-                </p>
-                <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40]/70">
-                  Start shopping to see your orders here
-                </p>
+              <div className="text-center py-20 bg-white rounded-[28px] border border-[#A8927B]/10 shadow-[0_20px_60px_rgba(71,56,38,0.08)]">
+                <Package size={64} className="mx-auto text-[#9CAF88] mb-4" />
+                <p className="text-3xl font-semibold text-[#3A5A40] mb-2">No orders yet</p>
+                <p className="text-sm text-[#6B5E4E]">Start shopping to see your orders here.</p>
               </div>
             )}
           </div>
@@ -292,14 +259,16 @@ export function UserDashboard({
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20">
-                <Heart size={64} className="mx-auto text-[#D4703B] mb-4" />
-                <p className="font-['Amatic_SC'] text-3xl text-[#3A5A40] mb-2">
-                  Your wishlist is empty
-                </p>
-                <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40]/70">
-                  Save items you love for later
-                </p>
+              <div className="text-center py-20 bg-white/95 rounded-[28px] border border-[#A8927B]/10 p-12 shadow-[0_20px_40px_rgba(71,56,38,0.06)]">
+                <Heart size={64} className="mx-auto text-[#C77956] mb-4" />
+                <p className="text-3xl font-semibold text-[#3A5A40] mb-2">Your wishlist is empty</p>
+                <p className="text-sm text-[#6B5E4E] mb-6">Save items you love for later</p>
+                <button
+                  onClick={onBackClick}
+                  className="rounded-full bg-[#9CAF88] px-6 py-3 text-sm font-semibold text-[#FAF7F2] shadow-sm transition hover:bg-[#82ae6f]"
+                >
+                  Start Shopping
+                </button>
               </div>
             )}
           </div>
@@ -307,17 +276,16 @@ export function UserDashboard({
 
         {activeTab === 'manage-products' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="font-['Amatic_SC'] text-4xl font-bold text-[#3A5A40]">
-                My Products ({products.filter(p => p.artisan.id === user.id || p.artisan.name === user.name).length})
-              </h2>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-4xl font-semibold text-[#3A5A40] font-['Cormorant_Garamond']">
+                  My Products ({products.filter(p => p.artisan.id === user.id || p.artisan.name === user.name).length})
+                </h2>
+                <p className="mt-2 text-sm text-[#6B5E4E]">Manage your handmade listings and keep your shop updated.</p>
+              </div>
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
-                className="flex items-center space-x-2 bg-[#D4703B] text-[#FFF8E7] px-6 py-3 rounded-lg font-['Josefin_Sans'] text-sm font-semibold hover:bg-[#3A5A40] transition-colors duration-300 shadow-md"
-                style={{
-                  border: '2px solid #3A5A40',
-                  borderRadius: '15px 5px 15px 5px'
-                }}
+                className="inline-flex items-center gap-2 rounded-full bg-[#9CAF88] px-6 py-3 text-sm font-semibold text-[#FAF7F2] shadow-md transition hover:bg-[#82ae6f]"
               >
                 <Plus size={16} />
                 <span>{showAddForm ? 'Cancel' : 'Add New Product'}</span>
@@ -325,53 +293,44 @@ export function UserDashboard({
             </div>
 
             {showAddForm && (
-              <form onSubmit={handleCreateProduct} className="bg-white p-8 rounded-3xl shadow-xl space-y-4 border-2 border-[#D4703B]"
-                    style={{ borderRadius: '30px 10px 30px 10px' }}>
-                <h3 className="font-['Cormorant_Garamond'] text-2xl font-bold text-[#3A5A40] mb-4">
-                  Add Handcrafted Product
-                </h3>
-                
+              <form onSubmit={handleCreateProduct} className="bg-white/95 p-8 rounded-[28px] shadow-[0_24px_60px_rgba(71,56,38,0.12)] space-y-6 border border-[#A8927B]/10">
+                <div>
+                  <h3 className="text-2xl font-semibold text-[#3A5A40] font-['Cormorant_Garamond'] mb-2">Add Handcrafted Product</h3>
+                  <p className="text-sm text-[#6B5E4E]">Share your newest artisan creation with the marketplace.</p>
+                </div>
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Product Name *
-                    </label>
+                    <label className="text-sm text-[#3A5A40] mb-2 block">Product Name *</label>
                     <input
                       type="text"
                       required
                       value={newProduct.name}
                       onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
-                      style={{ borderRadius: '12px 3px 12px 3px' }}
+                      className="w-full rounded-3xl border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none focus:border-[#9CAF88] focus:ring-[#9CAF88]/20"
                     />
                   </div>
 
                   <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Price ($) *
-                    </label>
+                    <label className="text-sm text-[#3A5A40] mb-2 block">Price ($) *</label>
                     <input
                       type="number"
                       step="0.01"
                       required
                       value={newProduct.price}
                       onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
-                      style={{ borderRadius: '12px 3px 12px 3px' }}
+                      className="w-full rounded-3xl border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none focus:border-[#9CAF88] focus:ring-[#9CAF88]/20"
                     />
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Category
-                    </label>
+                    <label className="text-sm text-[#3A5A40] mb-2 block">Category</label>
                     <select
                       value={newProduct.category}
                       onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
-                      style={{ borderRadius: '12px 3px 12px 3px' }}
+                      className="w-full rounded-3xl border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none focus:border-[#9CAF88] focus:ring-[#9CAF88]/20"
                     >
                       <option value="Pottery">Pottery</option>
                       <option value="Leather Goods">Leather Goods</option>
@@ -384,91 +343,74 @@ export function UserDashboard({
                   </div>
 
                   <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Location (e.g. Portland, OR)
-                    </label>
+                    <label className="text-sm text-[#3A5A40] mb-2 block">Location</label>
                     <input
                       type="text"
                       value={newProduct.location}
                       onChange={(e) => setNewProduct({ ...newProduct, location: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
-                      style={{ borderRadius: '12px 3px 12px 3px' }}
+                      className="w-full rounded-3xl border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none focus:border-[#9CAF88] focus:ring-[#9CAF88]/20"
                     />
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Image URL (Unsplash or direct link)
-                    </label>
+                    <label className="text-sm text-[#3A5A40] mb-2 block">Image URL</label>
                     <input
                       type="text"
                       placeholder="https://images.unsplash.com/..."
                       value={newProduct.image}
                       onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
-                      style={{ borderRadius: '12px 3px 12px 3px' }}
+                      className="w-full rounded-3xl border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none focus:border-[#9CAF88] focus:ring-[#9CAF88]/20"
                     />
                   </div>
 
                   <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Stock Quantity
-                    </label>
+                    <label className="text-sm text-[#3A5A40] mb-2 block">Stock Quantity</label>
                     <input
                       type="number"
                       value={newProduct.inStock}
                       onChange={(e) => setNewProduct({ ...newProduct, inStock: e.target.value })}
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
-                      style={{ borderRadius: '12px 3px 12px 3px' }}
+                      className="w-full rounded-3xl border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none focus:border-[#9CAF88] focus:ring-[#9CAF88]/20"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                    Product Description
-                  </label>
+                  <label className="text-sm text-[#3A5A40] mb-2 block">Product Description</label>
                   <textarea
                     rows={3}
                     value={newProduct.description}
                     onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm bg-white"
-                    style={{ borderRadius: '12px 3px 12px 3px' }}
+                    className="w-full rounded-3xl border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none focus:border-[#9CAF88] focus:ring-[#9CAF88]/20"
                   />
                 </div>
 
-                <div className="flex items-center space-x-2 py-2">
+                <div className="flex items-center gap-3">
                   <input
                     type="checkbox"
                     id="customizable"
                     checked={newProduct.customizable}
                     onChange={(e) => setNewProduct({ ...newProduct, customizable: e.target.checked })}
-                    className="w-4 h-4 text-[#D4703B] border-2 border-[#3A5A40] rounded focus:ring-[#D4703B] cursor-pointer"
+                    className="h-4 w-4 rounded border-[#A8927B] text-[#9CAF88] focus:ring-[#9CAF88]"
                   />
-                  <label htmlFor="customizable" className="font-['Josefin_Sans'] text-sm text-[#3A5A40] select-none cursor-pointer">
-                    Offer Customization (e.g. custom initials/size)
+                  <label htmlFor="customizable" className="text-sm text-[#3A5A40] cursor-pointer">
+                    Offer customization (e.g. initials or size)
                   </label>
                 </div>
 
-                <div className="flex justify-end space-x-4 pt-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
                   <button
                     type="button"
                     onClick={() => setShowAddForm(false)}
-                    className="bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-['Josefin_Sans'] text-sm font-semibold hover:bg-gray-200 transition-colors"
-                    style={{ borderRadius: '12px 3px 12px 3px' }}
+                    className="rounded-full bg-[#F4F0EA] px-6 py-3 text-sm font-semibold text-[#6B5E4E] transition hover:bg-[#E8DFC9]"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="bg-[#D4703B] text-[#FFF8E7] px-8 py-3 rounded-lg font-['Josefin_Sans'] text-sm font-semibold hover:bg-[#3A5A40] transition-colors shadow-md disabled:opacity-50"
-                    style={{
-                      border: '2px solid #3A5A40',
-                      borderRadius: '15px 5px 15px 5px'
-                    }}
+                    className="rounded-full bg-[#C77956] px-8 py-3 text-sm font-semibold text-[#FAF7F2] shadow-md transition hover:bg-[#A85B42] disabled:opacity-50"
                   >
                     {loading ? 'Creating...' : 'Create Product'}
                   </button>
@@ -494,22 +436,13 @@ export function UserDashboard({
                   ))}
               </div>
             ) : (
-              <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-[#3A5A40]/20"
-                   style={{ borderRadius: '30px 10px 30px 10px' }}>
-                <Package size={64} className="mx-auto text-[#D4703B] mb-4" />
-                <p className="font-['Amatic_SC'] text-3xl text-[#3A5A40] mb-2">
-                  No products listed yet
-                </p>
-                <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40]/70 mb-6">
-                  List your first handcrafted masterpiece to start selling!
-                </p>
+              <div className="text-center py-20 bg-white rounded-[28px] border border-dashed border-[#A8927B]/20 shadow-[0_20px_60px_rgba(71,56,38,0.08)]">
+                <Package size={64} className="mx-auto text-[#9CAF88] mb-4" />
+                <p className="text-3xl font-semibold text-[#3A5A40] mb-2">No products listed yet</p>
+                <p className="text-sm text-[#6B5E4E] mb-6">List your first handcrafted masterpiece to start selling!</p>
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="bg-[#D4703B] text-[#FFF8E7] px-6 py-3 rounded-lg font-['Josefin_Sans'] text-sm font-semibold hover:bg-[#3A5A40] transition-colors"
-                  style={{
-                    border: '2px solid #3A5A40',
-                    borderRadius: '15px 5px 15px 5px'
-                  }}
+                  className="rounded-full bg-[#C77956] px-6 py-3 text-sm font-semibold text-[#FAF7F2] shadow-md transition hover:bg-[#A85B42]"
                 >
                   Create Your First Listing
                 </button>

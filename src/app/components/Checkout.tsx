@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronLeft, CreditCard, Lock } from "lucide-react";
+import { ChevronLeft, CreditCard, Lock, Sparkles } from "lucide-react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
 import type { CartItem, User } from "@/app/App";
 import { toast } from "sonner";
@@ -53,60 +53,38 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
 
   if (step === "complete") {
     return (
-      <div className="min-h-screen bg-[#FFF8E7] py-16">
-        <div className="max-w-2xl mx-auto px-4 text-center">
-          <div
-            className="bg-white p-12 rounded-3xl shadow-2xl"
-            style={{
-              border: "4px solid #D4703B",
-              borderRadius: "40px 10px 40px 10px",
-            }}
-          >
-            <div className="w-24 h-24 bg-[#D4703B] rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-5xl">✓</span>
+      <div className="min-h-screen bg-[#F9F5EE] py-20">
+        <div className="mx-auto max-w-2xl px-4">
+          <div className="overflow-hidden rounded-[32px] bg-[#FAF7F2] px-8 py-12 shadow-[0_32px_80px_rgba(71,56,38,0.14)] ring-1 ring-[#A8927B]/20">
+            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[#9CAF88]/10 text-[#3A5A40] shadow-inner">
+              <Sparkles size={32} />
             </div>
 
-            <h1 className="font-['Amatic_SC'] text-6xl font-bold text-[#3A5A40] mb-4">
-              Thank You!
+            <h1 className="text-4xl font-semibold tracking-tight text-[#3A5A40] sm:text-5xl font-['Cormorant_Garamond']">
+              Thank you for your order
             </h1>
 
-            <p className="font-['Josefin_Sans'] text-lg text-[#3A5A40]/80 mb-8">
-              Your order has been placed successfully. The artisans are excited
-              to create your unique pieces!
+            <p className="mt-4 text-base leading-7 text-[#A8927B] font-['Lora']">
+              Your order has been received and will be prepared with care. We&apos;ve notified the artisan so your handcrafted pieces can be shipped soon.
             </p>
 
-            <div
-              className="bg-[#F4ACB7]/20 p-6 rounded-xl mb-8"
-              style={{
-                border: "2px dashed #D4703B",
-                borderRadius: "20px 5px 20px 5px",
-              }}
-            >
-              <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2">
-                Order Number:{" "}
-                <span className="font-bold">
-                  #{Math.floor(Math.random() * 100000)}
-                </span>
-              </p>
-              <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40]">
-                Estimated delivery:{" "}
-                <span className="font-bold">5-7 business days</span>
+            <div className="mt-8 rounded-3xl border border-[#A8927B]/20 bg-[#F4E9DD] p-6">
+              <p className="text-sm text-[#A8927B] font-['Lora']">Order Number</p>
+              <p className="mt-1 text-lg font-semibold text-[#3A5A40]">#{Math.floor(Math.random() * 100000)}</p>
+              <p className="mt-4 text-sm text-[#A8927B] font-['Lora']">
+                Estimated delivery: <span className="font-semibold text-[#3A5A40]">5-7 business days</span>
               </p>
             </div>
 
             <button
               onClick={onBackClick}
-              className="bg-[#D4703B] text-[#FFF8E7] px-8 py-4 rounded-lg font-['Josefin_Sans'] text-lg font-semibold hover:bg-[#3A5A40] transition-all duration-300 shadow-xl"
-              style={{
-                border: "3px solid #3A5A40",
-                borderRadius: "20px 5px 20px 5px",
-              }}
+              className="mt-10 inline-flex rounded-[24px] bg-[#9CAF88] px-8 py-4 text-base font-semibold text-[#FAF7F2] shadow-lg transition hover:bg-[#7EA474] font-['Lora']"
             >
-              Continue Shopping
+              Continue shopping
             </button>
 
-            <p className="font-['Josefin_Sans'] text-xs text-[#3A5A40]/60 mt-6">
-              A confirmation email has been sent to {shippingInfo.email}
+            <p className="mt-6 text-sm text-[#A8927B] font-['Lora']">
+              A confirmation email has been sent to {shippingInfo.email}.
             </p>
           </div>
         </div>
@@ -115,196 +93,122 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF8E7] py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Back Button */}
+    <div className="min-h-screen bg-[#F9F5EE] py-10">
+      <div className="mx-auto max-w-6xl px-4">
         <button
           onClick={onBackClick}
-          className="flex items-center space-x-2 mb-8 text-[#3A5A40] hover:text-[#D4703B] transition-colors duration-300"
+          className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-[#3A5A40] transition hover:text-[#9CAF88] font-['Lora']"
         >
           <ChevronLeft size={20} />
-          <span className="font-['Josefin_Sans'] text-sm">Back to Shop</span>
+          Back to shop
         </button>
 
-        {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-12">
-          <div className="flex items-center space-x-4">
-            <div
-              className={`flex items-center space-x-2 ${step === "shipping" ? "text-[#D4703B]" : "text-[#3A5A40]"}`}
-            >
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-['Josefin_Sans'] font-bold ${
-                  step === "shipping"
-                    ? "bg-[#D4703B] text-[#FFF8E7]"
-                    : "bg-[#3A5A40] text-[#FFF8E7]"
-                }`}
-              >
-                1
-              </div>
-              <span className="font-['Josefin_Sans'] text-sm">Shipping</span>
+        <div className="mb-12 rounded-[32px] bg-[#FAF7F2] p-5 shadow-[0_24px_60px_rgba(71,56,38,0.12)] ring-1 ring-[#A8927B]/20">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[#A8927B] font-['Lora']">Checkout</p>
+              <h2 className="mt-2 text-2xl font-semibold text-[#3A5A40] sm:text-3xl font-['Cormorant_Garamond']">
+                Secure checkout
+              </h2>
             </div>
-
-            <div className="w-16 h-0.5 bg-[#3A5A40]/20"></div>
-
-            <div
-              className={`flex items-center space-x-2 ${step === "payment" ? "text-[#D4703B]" : "text-[#3A5A40]/50"}`}
-            >
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-['Josefin_Sans'] font-bold ${
-                  step === "payment"
-                    ? "bg-[#D4703B] text-[#FFF8E7]"
-                    : "bg-[#3A5A40]/20 text-[#3A5A40]"
-                }`}
-              >
-                2
+            <div className="grid grid-cols-2 gap-3 sm:auto-cols-auto sm:grid-flow-col">
+              <div className="rounded-2xl border border-[#A8927B]/20 bg-[#F4E9DD] px-4 py-3 text-center">
+                <p className="text-xs text-[#A8927B] font-['Lora']">Shipping</p>
+                <p className="mt-2 text-lg font-semibold text-[#3A5A40]">Step 1</p>
               </div>
-              <span className="font-['Josefin_Sans'] text-sm">Payment</span>
+              <div className="rounded-2xl border border-[#A8927B]/20 bg-[#F4E9DD] px-4 py-3 text-center">
+                <p className="text-xs text-[#A8927B] font-['Lora']">Payment</p>
+                <p className="mt-2 text-lg font-semibold text-[#3A5A40]">Step 2</p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Main Form */}
-          <div className="md:col-span-2">
+        <div className="grid gap-8 lg:grid-cols-[1.65fr_0.95fr]">
+          <div>
             {step === "shipping" && (
               <form
                 onSubmit={handleSubmitShipping}
-                className="bg-white p-8 rounded-3xl shadow-xl"
-                style={{
-                  border: "3px solid #3A5A40",
-                  borderRadius: "30px 10px 30px 10px",
-                }}
+                className="rounded-[32px] bg-[#FAF7F2] p-8 shadow-[0_24px_60px_rgba(71,56,38,0.12)] ring-1 ring-[#A8927B]/20"
               >
-                <h2 className="font-['Amatic_SC'] text-3xl sm:text-4xl font-bold text-[#3A5A40] mb-6">
-                  Shipping Information
-                </h2>
+                <h3 className="text-3xl font-semibold text-[#3A5A40] mb-6 font-['Cormorant_Garamond']">
+                  Shipping information
+                </h3>
 
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
+                <div className="space-y-5">
+                  <div className="grid gap-4 sm:grid-cols-2">
+                      <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
                         Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={shippingInfo.name}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            name: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                        style={{ borderRadius: "12px 3px 12px 3px" }}
+                        <input
+                          type="text"
+                          required
+                          value={shippingInfo.name}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, name: e.target.value })}
+                          className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
-                    </div>
-                    <div>
-                      <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
+                    </label>
+                      <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
                         Email *
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={shippingInfo.email}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            email: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                        style={{ borderRadius: "12px 3px 12px 3px" }}
+                        <input
+                          type="email"
+                          required
+                          value={shippingInfo.email}
+                          onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
+                          className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
-                    </div>
+                    </label>
                   </div>
 
-                  <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Address *
-                    </label>
+                  <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                    Address *
                     <input
                       type="text"
                       required
                       value={shippingInfo.address}
-                      onChange={(e) =>
-                        setShippingInfo({
-                          ...shippingInfo,
-                          address: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                      style={{ borderRadius: "12px 3px 12px 3px" }}
+                      onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
+                      className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                     />
-                  </div>
+                  </label>
 
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                        City *
-                      </label>
+                  <div className="grid gap-4 lg:grid-cols-3">
+                    <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                      City *
                       <input
                         type="text"
                         required
                         value={shippingInfo.city}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            city: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                        style={{ borderRadius: "12px 3px 12px 3px" }}
+                        onChange={(e) => setShippingInfo({ ...shippingInfo, city: e.target.value })}
+                        className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
-                    </div>
-                    <div>
-                      <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                        State *
-                      </label>
+                    </label>
+                    <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                      State *
                       <input
                         type="text"
                         required
                         value={shippingInfo.state}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            state: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                        style={{ borderRadius: "12px 3px 12px 3px" }}
+                        onChange={(e) => setShippingInfo({ ...shippingInfo, state: e.target.value })}
+                        className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
-                    </div>
-                    <div>
-                      <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                        ZIP Code *
-                      </label>
+                    </label>
+                    <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                      ZIP Code *
                       <input
                         type="text"
                         required
                         value={shippingInfo.zip}
-                        onChange={(e) =>
-                          setShippingInfo({
-                            ...shippingInfo,
-                            zip: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                        style={{ borderRadius: "12px 3px 12px 3px" }}
+                        onChange={(e) => setShippingInfo({ ...shippingInfo, zip: e.target.value })}
+                        className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
-                    </div>
+                    </label>
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full mt-6 bg-[#D4703B] text-[#FFF8E7] px-8 py-4 rounded-lg font-['Josefin_Sans'] text-lg font-semibold hover:bg-[#3A5A40] transition-all duration-300 shadow-xl"
-                  style={{
-                    border: "3px solid #3A5A40",
-                    borderRadius: "20px 5px 20px 5px",
-                  }}
+                  className="mt-8 inline-flex w-full items-center justify-center rounded-[24px] bg-[#9CAF88] px-8 py-4 text-base font-semibold text-[#FAF7F2] shadow-lg transition hover:bg-[#7EA474] font-['Lora']"
                 >
-                  Continue to Payment
+                  Continue to payment
                 </button>
               </form>
             )}
@@ -312,209 +216,136 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
             {step === "payment" && (
               <form
                 onSubmit={handleSubmitPayment}
-                className="bg-white p-8 rounded-3xl shadow-xl"
-                style={{
-                  border: "3px solid #3A5A40",
-                  borderRadius: "30px 10px 30px 10px",
-                }}
+                className="rounded-[32px] bg-[#FAF7F2] p-8 shadow-[0_24px_60px_rgba(71,56,38,0.12)] ring-1 ring-[#A8927B]/20"
               >
-                <h2 className="font-['Amatic_SC'] text-4xl font-bold text-[#3A5A40] mb-6">
-                  Payment Information
-                </h2>
+                <h3 className="text-3xl font-semibold text-[#3A5A40] mb-6 font-['Cormorant_Garamond']">
+                  Payment information
+                </h3>
 
-                <div
-                  className="bg-[#F4ACB7]/10 p-4 rounded-xl mb-6 flex items-center space-x-3"
-                  style={{
-                    border: "2px solid #D4703B",
-                    borderRadius: "15px 5px 15px 5px",
-                  }}
-                >
-                  <Lock size={20} className="text-[#D4703B]" />
-                  <p className="font-['Josefin_Sans'] text-xs text-[#3A5A40]">
-                    Your payment information is secure and encrypted
-                  </p>
+                <div className="mb-6 rounded-3xl border border-[#D4703B]/20 bg-[#FFF1EC] px-4 py-4 text-sm text-[#3A5A40] font-['Lora']">
+                  <div className="flex items-center gap-3">
+                    <Lock size={18} className="text-[#D4703B]" />
+                    <span>Your payment information is secure and encrypted</span>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Card Number *
-                    </label>
+                <div className="space-y-5">
+                  <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                    Card number *
                     <input
                       type="text"
                       required
                       placeholder="1234 5678 9012 3456"
                       value={paymentInfo.cardNumber}
-                      onChange={(e) =>
-                        setPaymentInfo({
-                          ...paymentInfo,
-                          cardNumber: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                      style={{ borderRadius: "12px 3px 12px 3px" }}
+                      onChange={(e) => setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })}
+                      className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                     />
-                  </div>
+                  </label>
 
-                  <div>
-                    <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                      Cardholder Name *
-                    </label>
+                  <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                    Cardholder name *
                     <input
                       type="text"
                       required
                       value={paymentInfo.cardName}
-                      onChange={(e) =>
-                        setPaymentInfo({
-                          ...paymentInfo,
-                          cardName: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                      style={{ borderRadius: "12px 3px 12px 3px" }}
+                      onChange={(e) => setPaymentInfo({ ...paymentInfo, cardName: e.target.value })}
+                      className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                     />
-                  </div>
+                  </label>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                        Expiry Date *
-                      </label>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                      Expiry date *
                       <input
                         type="text"
                         required
                         placeholder="MM/YY"
                         value={paymentInfo.expiry}
-                        onChange={(e) =>
-                          setPaymentInfo({
-                            ...paymentInfo,
-                            expiry: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                        style={{ borderRadius: "12px 3px 12px 3px" }}
+                        onChange={(e) => setPaymentInfo({ ...paymentInfo, expiry: e.target.value })}
+                        className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
-                    </div>
-                    <div>
-                      <label className="font-['Josefin_Sans'] text-sm text-[#3A5A40] mb-2 block">
-                        CVV *
-                      </label>
+                    </label>
+                    <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                      CVV *
                       <input
                         type="text"
                         required
                         placeholder="123"
                         value={paymentInfo.cvv}
-                        onChange={(e) =>
-                          setPaymentInfo({
-                            ...paymentInfo,
-                            cvv: e.target.value,
-                          })
-                        }
-                        className="w-full px-4 py-3 rounded-lg border-2 border-[#3A5A40]/20 focus:border-[#D4703B] focus:outline-none font-['Josefin_Sans'] text-sm"
-                        style={{ borderRadius: "12px 3px 12px 3px" }}
+                        onChange={(e) => setPaymentInfo({ ...paymentInfo, cvv: e.target.value })}
+                        className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
-                    </div>
+                    </label>
                   </div>
                 </div>
 
-                <div className="flex space-x-4 mt-6">
+                <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                   <button
                     type="button"
                     onClick={() => setStep("shipping")}
-                    className="flex-1 bg-white text-[#3A5A40] px-8 py-4 rounded-lg font-['Josefin_Sans'] text-lg font-semibold hover:bg-[#F4ACB7]/30 transition-all duration-300 border-2 border-[#3A5A40]/20"
-                    style={{ borderRadius: "20px 5px 20px 5px" }}
+                    className="rounded-[24px] border border-[#A8927B]/20 bg-white px-8 py-4 text-base font-semibold text-[#3A5A40] transition hover:bg-[#FAF7F2] font-['Lora']"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 bg-[#D4703B] text-[#FFF8E7] px-8 py-4 rounded-lg font-['Josefin_Sans'] text-lg font-semibold hover:bg-[#3A5A40] transition-all duration-300 shadow-xl flex items-center justify-center space-x-2"
-                    style={{
-                      border: "3px solid #3A5A40",
-                      borderRadius: "20px 5px 20px 5px",
-                    }}
+                    className="rounded-2xl bg-[#3A5A40] px-8 py-4 text-base font-semibold text-white shadow-lg transition hover:bg-[#2F4A32]"
                   >
-                    <CreditCard size={20} />
-                    <span>Place Order</span>
+                    <span className="inline-flex items-center gap-2">
+                      <CreditCard size={18} /> Place order
+                    </span>
                   </button>
                 </div>
               </form>
             )}
           </div>
 
-          {/* Order Summary */}
-          <div
-            className="bg-white p-6 rounded-3xl shadow-xl h-fit lg:sticky lg:top-24"
-            style={{
-              border: "3px solid #3A5A40",
-              borderRadius: "25px 5px 25px 5px",
-            }}
-          >
-            <h3 className="font-['Amatic_SC'] text-3xl font-bold text-[#3A5A40] mb-6">
-              Order Summary
-            </h3>
-
-            <div className="space-y-4 mb-6">
-              {cart.map((item) => (
-                <div
-                  key={`${item.id}-${JSON.stringify(item.customization)}`}
-                  className="flex space-x-3"
-                >
-                  <ImageWithFallback
-                    src={item.image}
-                    alt={item.name}
-                    className="w-16 h-16 rounded-lg object-cover"
-                  />
-                  <div className="flex-1">
-                    <p className="font-['Josefin_Sans'] text-sm font-medium text-[#3A5A40]">
-                      {item.name}
-                    </p>
-                    <p className="font-['Josefin_Sans'] text-xs text-[#3A5A40]/60">
-                      Qty: {item.quantity}
-                    </p>
+          <aside className="space-y-6">
+            <div className="rounded-[32px] border border-[#A8927B]/20 bg-[#FAF7F2] p-6 shadow-[0_24px_60px_rgba(71,56,38,0.12)] lg:sticky lg:top-24">
+              <h3 className="text-2xl font-semibold text-[#3A5A40] mb-5 font-['Cormorant_Garamond']">Order summary</h3>
+              <div className="space-y-4">
+                {cart.map((item) => (
+                  <div key={`${item.id}-${JSON.stringify(item.customization)}`} className="flex items-center gap-3">
+                    <ImageWithFallback
+                      src={item.image}
+                      alt={item.name}
+                      className="h-16 w-16 rounded-3xl object-cover"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-[#3A5A40] font-['Lora']">{item.name}</p>
+                      <p className="text-xs text-[#A8927B] font-['Lora']">Qty: {item.quantity}</p>
+                    </div>
+                    <p className="text-sm font-semibold text-[#3A5A40]">${(item.price * item.quantity).toFixed(2)}</p>
                   </div>
-                  <p className="font-['Josefin_Sans'] text-sm font-bold text-[#3A5A40]">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </p>
+                ))}
+              </div>
+
+              <div className="mt-6 space-y-3 border-t border-[#A8927B]/20 pt-4 text-sm text-[#3A5A40] font-['Lora']">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span className="font-medium text-[#3A5A40]">${subtotal.toFixed(2)}</span>
                 </div>
-              ))}
+                <div className="flex justify-between">
+                  <span>Shipping</span>
+                  <span className="font-medium text-[#3A5A40]">${shipping.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tax</span>
+                  <span className="font-medium text-[#3A5A40]">${tax.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center justify-between border-t border-[#A8927B]/20 pt-4 text-xl font-semibold text-[#3A5A40] font-['Lora']">
+                <span>${total.toFixed(2)}</span>
+              </div>
             </div>
 
-            <div className="border-t-2 border-[#3A5A40]/10 pt-4 space-y-2">
-              <div className="flex justify-between">
-                <span className="font-['Josefin_Sans'] text-sm text-[#3A5A40]">
-                  Subtotal
-                </span>
-                <span className="font-['Josefin_Sans'] text-sm font-medium text-[#3A5A40]">
-                  ${subtotal.toFixed(2)}
-                </span>
+            {shipping === 0 && (
+              <div className="rounded-[32px] border border-[#9CAF88]/25 bg-[#eff6ee] px-5 py-4 text-sm text-[#3A5A40]">
+                Congratulations — you qualified for free shipping!
               </div>
-              <div className="flex justify-between">
-                <span className="font-['Josefin_Sans'] text-sm text-[#3A5A40]">
-                  Shipping
-                </span>
-                <span className="font-['Josefin_Sans'] text-sm font-medium text-[#3A5A40]">
-                  ${shipping.toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-['Josefin_Sans'] text-sm text-[#3A5A40]">
-                  Tax
-                </span>
-                <span className="font-['Josefin_Sans'] text-sm font-medium text-[#3A5A40]">
-                  ${tax.toFixed(2)}
-                </span>
-              </div>
-              <div className="border-t-2 border-[#3A5A40]/10 pt-2 flex justify-between">
-                <span className="font-['Amatic_SC'] text-2xl font-bold text-[#3A5A40]">
-                  Total
-                </span>
-                <span className="font-['Amatic_SC'] text-3xl font-bold text-[#D4703B]">
-                  ${total.toFixed(2)}
-                </span>
-              </div>
-            </div>
-          </div>
+            )}
+          </aside>
         </div>
       </div>
     </div>

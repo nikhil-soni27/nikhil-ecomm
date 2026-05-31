@@ -68,6 +68,31 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
+// Search Products by query
+app.get('/api/products/search', async (req, res) => {
+  const query = String(req.query.query || '').trim();
+  if (!query) {
+    return res.json([]);
+  }
+
+  try {
+    const db = getDB();
+    const regex = new RegExp(query, 'i');
+    const products = await db.collection('products').find({
+      $or: [
+        { name: regex },
+        { description: regex },
+        { category: regex },
+        { materials: { $elemMatch: regex } }
+      ]
+    }).limit(50).toArray();
+    res.json(products);
+  } catch (err) {
+    console.error('Search products error:', err);
+    res.status(500).json({ error: 'Server error searching products' });
+  }
+});
+
 // Get Single Product by ID
 app.get('/api/products/:id', async (req, res) => {
   try {

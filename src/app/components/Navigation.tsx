@@ -95,6 +95,11 @@ export function Navigation({
               placeholder="Search natural products..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  onSearchClick();
+                }
+              }}
               className="bg-transparent outline-none w-full font-['Lora'] text-sm text-[#A8927B] placeholder:text-[#A8927B]/50"
             />
           </div>
@@ -178,6 +183,12 @@ export function Navigation({
                   placeholder="Search natural products..."
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      onSearchClick();
+                      setIsMobileMenuOpen(false);
+                    }
+                  }}
                   className="bg-transparent outline-none w-full font-['Lora'] text-sm text-[#A8927B] placeholder:text-[#A8927B]/50"
                 />
               </div>

@@ -6,17 +6,22 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 // Retrieve saved JWT token
 export const getToken = (): string | null => {
-  return localStorage.getItem('artisan_token');
+  return localStorage.getItem('artisan_token') || sessionStorage.getItem('artisan_token');
 };
 
 // Save JWT token
-export const setToken = (token: string): void => {
-  localStorage.setItem('artisan_token', token);
+export const setToken = (token: string, remember: boolean = true): void => {
+  if (remember) {
+    localStorage.setItem('artisan_token', token);
+  } else {
+    sessionStorage.setItem('artisan_token', token);
+  }
 };
 
 // Clear JWT token
 export const removeToken = (): void => {
   localStorage.removeItem('artisan_token');
+  sessionStorage.removeItem('artisan_token');
 };
 
 // Helper for making standard API requests
@@ -55,6 +60,13 @@ export const api = {
     return apiFetch<Product>(`/products/${id}`);
   },
 
+  searchProducts: async (query: string, options: RequestInit = {}): Promise<Product[]> => {
+    return apiFetch<Product[]>(`/products/search?query=${encodeURIComponent(query)}`, {
+      ...options,
+      method: 'GET'
+    });
+  },
+
   // Role protected (Artisan only)
   addProduct: async (productData: Partial<Product>): Promise<Product> => {
     return apiFetch<Product>('/products', {
@@ -73,12 +85,12 @@ export const api = {
     return data;
   },
 
-  login: async (email: string, password: string): Promise<{ user: User; token: string }> => {
+  login: async (email: string, password: string, remember: boolean = true): Promise<{ user: User; token: string }> => {
     const data = await apiFetch<{ user: User; token: string }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
-    setToken(data.token);
+    setToken(data.token, remember);
     return data;
   },
 

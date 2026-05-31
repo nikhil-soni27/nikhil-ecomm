@@ -27,10 +27,7 @@ export function ProductCard({
 
   return (
     <div
-      className="bg-[#FAF7F2] rounded-xl overflow-hidden hover:shadow-lg transition-all duration-350 cursor-pointer relative group"
-      style={{
-        boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-      }}
+      className="bg-white/95 rounded-[28px] border border-[#A8927B]/10 overflow-hidden hover:shadow-[0_24px_80px_rgba(71,56,38,0.12)] transition-all duration-350 cursor-pointer relative group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -52,7 +49,7 @@ export function ProductCard({
           e.stopPropagation();
           onToggleWishlist(product.id);
         }}
-        className="absolute top-3 right-3 z-10 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-[#FAF7F2] transition-colors duration-350"
+        className="absolute top-3 right-3 z-10 w-10 h-10 bg-white/95 backdrop-blur-sm rounded-full shadow-md flex items-center justify-center hover:bg-[#FAF7F2] transition-colors duration-350 ring-1 ring-[#A8927B]/15"
       >
         <Heart
           size={18}
@@ -125,7 +122,7 @@ export function ProductCard({
         {/* Price and Add to Cart */}
         <div className="flex items-center justify-between pt-2">
           <div>
-            <p className="font-['Cormorant_Garamond'] text-xl font-semibold text-[#C77956]">
+            <p className="font-['Cormorant_Garamond'] text-2xl font-semibold text-[#C77956]">
               ${product.price.toFixed(2)}
             </p>
             {product.customizable && (
@@ -141,7 +138,7 @@ export function ProductCard({
               e.stopPropagation();
               onAddToCart(product);
             }}
-            className={`px-4 py-2.5 rounded-lg font-['Lora'] text-sm font-medium transition-all duration-350 flex items-center space-x-2 bg-[#9CAF88] text-[#FAF7F2] shadow-md md:opacity-0 md:hover:opacity-100`}
+            className={`px-4 py-2.5 rounded-full font-['Lora'] text-sm font-medium transition-all duration-350 flex items-center space-x-2 bg-[#9CAF88] text-[#FAF7F2] shadow-md md:opacity-0 md:hover:opacity-100`}
           >
             <ShoppingBag size={16} />
             <span>Add to Bag</span>
