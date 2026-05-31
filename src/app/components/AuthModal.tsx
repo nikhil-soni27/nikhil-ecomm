@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
-import { X, ArrowLeft, Mail, ShieldAlert, Sparkles, User as UserIcon } from 'lucide-react';
-import type { User } from '@/app/App';
-import { api } from '@/app/utils/api';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import {
+  X,
+  ArrowLeft,
+  Mail,
+  ShieldAlert,
+  Sparkles,
+  User as UserIcon,
+} from "lucide-react";
+import type { User } from "@/app/App";
+import { api } from "@/app/utils/api";
+import { toast } from "sonner";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -14,23 +21,25 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Forgot Password state
-  const [forgotMode, setForgotMode] = useState<'none' | 'email' | 'reset'>('none');
-  const [resetEmail, setResetEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [forgotMode, setForgotMode] = useState<"none" | "email" | "reset">(
+    "none",
+  );
+  const [resetEmail, setResetEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
 
   // Simulated Google Chooser state
   const [showGoogleChooser, setShowGoogleChooser] = useState(false);
-  const [customGoogleName, setCustomGoogleName] = useState('');
-  const [customGoogleEmail, setCustomGoogleEmail] = useState('');
+  const [customGoogleName, setCustomGoogleName] = useState("");
+  const [customGoogleEmail, setCustomGoogleEmail] = useState("");
   const [showCustomGoogleInput, setShowCustomGoogleInput] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    isArtisan: false
+    name: "",
+    email: "",
+    password: "",
+    isArtisan: false,
   });
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -38,10 +47,14 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    
+
     try {
       if (isLogin) {
-        const data = await api.login(formData.email, formData.password, rememberMe);
+        const data = await api.login(
+          formData.email,
+          formData.password,
+          rememberMe,
+        );
         onSuccess(data.user);
         toast.success(`Welcome back, ${data.user.name}!`);
       } else {
@@ -49,15 +62,15 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           formData.name,
           formData.email,
           formData.password,
-          formData.isArtisan
+          formData.isArtisan,
         );
         onSuccess(data.user);
         toast.success(`Welcome, ${data.user.name}! Account created.`);
       }
     } catch (err: any) {
-      console.error('Auth error:', err);
-      setError(err.message || 'Authentication failed. Please try again.');
-      toast.error(err.message || 'Authentication failed');
+      console.error("Auth error:", err);
+      setError(err.message || "Authentication failed. Please try again.");
+      toast.error(err.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -71,12 +84,12 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       await api.forgotPassword(resetEmail);
-      toast.success('Email verified successfully!');
-      setForgotMode('reset');
+      toast.success("Email verified successfully!");
+      setForgotMode("reset");
     } catch (err: any) {
-      console.error('Forgot password error:', err);
-      setError(err.message || 'Email address not found');
-      toast.error(err.message || 'Verification failed');
+      console.error("Forgot password error:", err);
+      setError(err.message || "Email address not found");
+      toast.error(err.message || "Verification failed");
     } finally {
       setLoading(false);
     }
@@ -90,18 +103,18 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
 
     try {
       await api.resetPassword(resetEmail, newPassword);
-      toast.success('Your password has been reset successfully!');
-      setForgotMode('none');
+      toast.success("Your password has been reset successfully!");
+      setForgotMode("none");
       setIsLogin(true);
       setFormData({
         ...formData,
         email: resetEmail,
-        password: ''
+        password: "",
       });
     } catch (err: any) {
-      console.error('Reset password error:', err);
-      setError(err.message || 'Failed to reset password');
-      toast.error(err.message || 'Reset failed');
+      console.error("Reset password error:", err);
+      setError(err.message || "Failed to reset password");
+      toast.error(err.message || "Reset failed");
     } finally {
       setLoading(false);
     }
@@ -111,15 +124,15 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const handleGoogleAccountSelect = async (name: string, email: string) => {
     setLoading(true);
     setShowGoogleChooser(false);
-    
+
     try {
       const googleId = `google-${Math.random().toString(36).substring(2, 11)}`;
       const data = await api.googleLogin(name, email, googleId);
       onSuccess(data.user);
       toast.success(`Logged in with Google as ${data.user.name}!`);
     } catch (err: any) {
-      console.error('Google login error:', err);
-      toast.error(err.message || 'Google Login failed');
+      console.error("Google login error:", err);
+      toast.error(err.message || "Google Login failed");
     } finally {
       setLoading(false);
     }
@@ -148,11 +161,11 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           </button>
 
           <div className="px-8 py-10">
-            {forgotMode === 'email' && (
+            {forgotMode === "email" && (
               <div>
                 <button
                   onClick={() => {
-                    setForgotMode('none');
+                    setForgotMode("none");
                     setError(null);
                   }}
                   className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#3A5A40] transition hover:text-[#9CAF88] font-['Lora']"
@@ -166,7 +179,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     Recover your account
                   </h2>
                   <p className="text-sm leading-6 text-[#A8927B] font-['Lora']">
-                    Enter your registered email address and we&apos;ll help you reset your password.
+                    Enter your registered email address and we&apos;ll help you
+                    reset your password.
                   </p>
                 </div>
 
@@ -196,20 +210,24 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     disabled={loading}
                     className="w-full rounded-2xl bg-[#3A5A40] px-6 py-3 text-base font-semibold text-white shadow-lg transition hover:bg-[#2F4A32] disabled:cursor-not-allowed disabled:opacity-70"
                   >
-                    {loading ? 'Verifying...' : 'Verify Email'}
+                    {loading ? "Verifying..." : "Verify Email"}
                   </button>
                 </form>
               </div>
             )}
 
-            {forgotMode === 'reset' && (
+            {forgotMode === "reset" && (
               <div>
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-semibold tracking-tight text-[#3A5A40] mb-2 font-['Cormorant_Garamond']">
                     Reset password
                   </h2>
                   <p className="text-sm leading-6 text-[#A8927B] font-['Lora']">
-                    Set a secure password for <span className="font-semibold text-[#3A5A40]">{resetEmail}</span>.
+                    Set a secure password for{" "}
+                    <span className="font-semibold text-[#3A5A40]">
+                      {resetEmail}
+                    </span>
+                    .
                   </p>
                 </div>
 
@@ -219,7 +237,10 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                   </div>
                 )}
 
-                <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
+                <form
+                  onSubmit={handleResetPasswordSubmit}
+                  className="space-y-4"
+                >
                   <div>
                     <label className="mb-2 block text-sm font-medium text-[#3A5A40] font-['Lora']">
                       New Password
@@ -239,25 +260,25 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     disabled={loading}
                     className="w-full rounded-[24px] bg-[#9CAF88] px-6 py-3 text-base font-semibold text-[#FAF7F2] shadow-lg transition hover:bg-[#7EA474] disabled:cursor-not-allowed disabled:opacity-70 font-['Lora']"
                   >
-                    {loading ? 'Updating...' : 'Update Password'}
+                    {loading ? "Updating..." : "Update Password"}
                   </button>
                 </form>
               </div>
             )}
 
-            {forgotMode === 'none' && (
+            {forgotMode === "none" && (
               <>
                 <div className="mb-6 text-center">
                   <p className="mb-3 text-xs uppercase tracking-[0.24em] text-[#A8927B] font-['Lora']">
                     Artisan Marketplace
                   </p>
                   <h2 className="text-3xl font-semibold tracking-tight text-[#3A5A40] font-['Cormorant_Garamond']">
-                    {isLogin ? 'Welcome Back' : 'Create your account'}
+                    {isLogin ? "Welcome Back" : "Create your account"}
                   </h2>
                   <p className="mt-3 text-sm leading-6 text-[#A8927B] font-['Lora']">
                     {isLogin
-                      ? 'Sign in to continue shopping handcrafted products from our artisans.'
-                      : 'Join our community and bring beautiful handmade pieces home.'}
+                      ? "Sign in to continue shopping handcrafted products from our artisans."
+                      : "Join our community and bring beautiful handmade pieces home."}
                   </p>
                 </div>
 
@@ -270,8 +291,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     }}
                     className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                       isLogin
-                        ? 'bg-white text-[#3A5A40] shadow-sm'
-                        : 'text-[#A8927B] hover:text-[#3A5A40]'
+                        ? "bg-white text-[#3A5A40] shadow-sm"
+                        : "text-[#A8927B] hover:text-[#3A5A40]"
                     } font-['Lora']`}
                   >
                     Sign in
@@ -284,8 +305,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     }}
                     className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                       !isLogin
-                        ? 'bg-white text-[#3A5A40] shadow-sm'
-                        : 'text-[#A8927B] hover:text-[#3A5A40]'
+                        ? "bg-white text-[#3A5A40] shadow-sm"
+                        : "text-[#A8927B] hover:text-[#3A5A40]"
                     } font-['Lora']`}
                   >
                     Sign up
@@ -309,7 +330,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                           type="text"
                           required
                           value={formData.name}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({ ...formData, name: e.target.value })
+                          }
                           className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/30"
                         />
                       </div>
@@ -324,7 +347,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                               type="radio"
                               name="isArtisan"
                               checked={!formData.isArtisan}
-                              onChange={() => setFormData({ ...formData, isArtisan: false })}
+                              onChange={() =>
+                                setFormData({ ...formData, isArtisan: false })
+                              }
                               className="h-4 w-4 text-[#3A5A40] focus:ring-[#3A5A40]"
                             />
                             Customer
@@ -334,7 +359,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                               type="radio"
                               name="isArtisan"
                               checked={formData.isArtisan}
-                              onChange={() => setFormData({ ...formData, isArtisan: true })}
+                              onChange={() =>
+                                setFormData({ ...formData, isArtisan: true })
+                              }
                               className="h-4 w-4 text-[#3A5A40] focus:ring-[#3A5A40]"
                             />
                             Artisan
@@ -352,7 +379,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                       type="email"
                       required
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/30"
                     />
                   </div>
@@ -365,7 +394,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                       type="password"
                       required
                       value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
                       className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/30"
                     />
                   </div>
@@ -384,7 +415,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                       <button
                         type="button"
                         onClick={() => {
-                          setForgotMode('email');
+                          setForgotMode("email");
                           setError(null);
                         }}
                         className="text-sm font-semibold text-[#C77956] transition hover:text-[#9B4D2A]"
@@ -399,7 +430,13 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                     disabled={loading}
                     className="w-full rounded-[24px] bg-[#3A5A40] px-6 py-3 text-base font-semibold text-[#FAF7F2] shadow-lg transition hover:bg-[#2F4A32] disabled:cursor-not-allowed disabled:opacity-70 font-['Lora']"
                   >
-                    {loading ? (isLogin ? 'Signing in...' : 'Creating account...') : isLogin ? 'Sign in' : 'Create account'}
+                    {loading
+                      ? isLogin
+                        ? "Signing in..."
+                        : "Creating account..."
+                      : isLogin
+                        ? "Sign in"
+                        : "Create account"}
                   </button>
                 </form>
 
@@ -418,13 +455,13 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                 </button>
 
                 <p className="mt-6 text-center text-sm text-[#3A5A40] font-['Lora']">
-                  {isLogin ? 'New here? ' : 'Already have an account? '}
+                  {isLogin ? "New here? " : "Already have an account? "}
                   <button
                     type="button"
                     onClick={() => setIsLogin(!isLogin)}
                     className="font-semibold text-[#C77956] hover:text-[#9B4D2A]"
                   >
-                    {isLogin ? 'Sign up' : 'Sign in'}
+                    {isLogin ? "Sign up" : "Sign in"}
                   </button>
                 </p>
               </>
@@ -457,7 +494,9 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                 <span className="text-[#34A853]">l</span>
                 <span className="text-[#EA4335]">e</span>
               </div>
-              <h3 className="text-lg font-medium text-[#3A5A40] mb-1 font-['Lora']">Choose an account</h3>
+              <h3 className="text-lg font-medium text-[#3A5A40] mb-1 font-['Lora']">
+                Choose an account
+              </h3>
               <p className="text-xs text-[#A8927B] font-['Lora']">
                 to continue to <strong>Artisan Marketplace</strong>
               </p>
@@ -466,13 +505,27 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             {!showCustomGoogleInput ? (
               <div className="space-y-2.5 mb-6">
                 {[
-                  { name: 'Sarah Mitchell', email: 'sarah.mitchell@gmail.com', avatar: 'https://i.pravatar.cc/150?img=1' },
-                  { name: 'James Cooper', email: 'james.cooper@gmail.com', avatar: 'https://i.pravatar.cc/150?img=12' },
-                  { name: 'Emma Rodriguez', email: 'emma.rodriguez@gmail.com', avatar: 'https://i.pravatar.cc/150?img=5' }
+                  {
+                    name: "Sarah Mitchell",
+                    email: "sarah.mitchell@gmail.com",
+                    avatar: "https://i.pravatar.cc/150?img=1",
+                  },
+                  {
+                    name: "James Cooper",
+                    email: "james.cooper@gmail.com",
+                    avatar: "https://i.pravatar.cc/150?img=12",
+                  },
+                  {
+                    name: "Emma Rodriguez",
+                    email: "emma.rodriguez@gmail.com",
+                    avatar: "https://i.pravatar.cc/150?img=5",
+                  },
                 ].map((account, index) => (
                   <button
                     key={index}
-                    onClick={() => handleGoogleAccountSelect(account.name, account.email)}
+                    onClick={() =>
+                      handleGoogleAccountSelect(account.name, account.email)
+                    }
                     className="w-full rounded-3xl border border-[#A8927B]/20 bg-white p-3.5 text-left transition hover:border-[#9CAF88]/50 hover:bg-[#FAF7F2]"
                   >
                     <div className="flex items-center justify-between gap-3">
@@ -483,8 +536,12 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                           className="h-10 w-10 rounded-full border border-[#A8927B]/20 object-cover"
                         />
                         <div>
-                          <p className="text-sm font-semibold text-[#3A5A40] font-['Lora']">{account.name}</p>
-                          <p className="text-xs text-[#A8927B] font-['Lora']">{account.email}</p>
+                          <p className="text-sm font-semibold text-[#3A5A40] font-['Lora']">
+                            {account.name}
+                          </p>
+                          <p className="text-xs text-[#A8927B] font-['Lora']">
+                            {account.email}
+                          </p>
                         </div>
                       </div>
                       {index === 0 && (
@@ -542,7 +599,12 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                   <button
                     type="button"
                     disabled={!customGoogleName || !customGoogleEmail}
-                    onClick={() => handleGoogleAccountSelect(customGoogleName, customGoogleEmail)}
+                    onClick={() =>
+                      handleGoogleAccountSelect(
+                        customGoogleName,
+                        customGoogleEmail,
+                      )
+                    }
                     className="flex-1 rounded-[24px] bg-[#4285F4] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#357ae8] disabled:cursor-not-allowed disabled:bg-[#cbd5e1] disabled:text-[#7A7A7A] font-['Lora']"
                   >
                     Sign in
@@ -552,7 +614,8 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
             )}
 
             <p className="text-center text-[10px] leading-normal text-[#A8927B] font-['Lora']">
-              To proceed, Google will share your name, email address, language preference, and profile picture with Artisan Marketplace.
+              To proceed, Google will share your name, email address, language
+              preference, and profile picture with Artisan Marketplace.
             </p>
           </div>
         </div>

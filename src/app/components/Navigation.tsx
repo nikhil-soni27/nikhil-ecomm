@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Heart, ShoppingBag, User, Search, Menu, X, Leaf, LogOut } from "lucide-react";
+import {
+  Heart,
+  ShoppingBag,
+  User,
+  Search,
+  Menu,
+  X,
+  Leaf,
+  LogOut,
+} from "lucide-react";
 import type { User as UserType } from "@/app/App";
 
 interface NavigationProps {
@@ -96,7 +105,7 @@ export function Navigation({
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   onSearchClick();
                 }
               }}
@@ -184,7 +193,7 @@ export function Navigation({
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       onSearchClick();
                       setIsMobileMenuOpen(false);
                     }

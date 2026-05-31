@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Search, ChevronLeft } from 'lucide-react';
-import type { Product } from '@/app/App';
-import { ProductCard } from '@/app/components/ProductCard';
-import { api } from '@/app/utils/api';
+import React, { useState, useEffect } from "react";
+import { Search, ChevronLeft } from "lucide-react";
+import type { Product } from "@/app/App";
+import { ProductCard } from "@/app/components/ProductCard";
+import { api } from "@/app/utils/api";
 
 interface SearchPageProps {
   searchQuery: string;
@@ -17,13 +17,13 @@ export function SearchPage({
   onSearchChange,
   products,
   onProductClick,
-  onBackClick
+  onBackClick,
 }: SearchPageProps) {
   const [localQuery, setLocalQuery] = useState(searchQuery);
   const [searchResults, setSearchResults] = useState<Product[]>(products);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const [recentSearches] = useState(['Pottery', 'Leather goods', 'Candles']);
+  const [recentSearches] = useState(["Pottery", "Leather goods", "Candles"]);
 
   useEffect(() => {
     setLocalQuery(searchQuery);
@@ -48,20 +48,27 @@ export function SearchPage({
 
       try {
         const results = await api.searchProducts(localQuery.trim(), {
-          signal: controller.signal
+          signal: controller.signal,
         });
         setSearchResults(results);
       } catch (err: any) {
-        if (err.name === 'AbortError') return;
-        console.error('Search API error:', err);
-        setSearchError('Unable to load search results. Showing local matches.');
+        if (err.name === "AbortError") return;
+        console.error("Search API error:", err);
+        setSearchError("Unable to load search results. Showing local matches.");
         setSearchResults(
-          products.filter(product =>
-            product.name.toLowerCase().includes(localQuery.toLowerCase()) ||
-            product.description.toLowerCase().includes(localQuery.toLowerCase()) ||
-            product.category.toLowerCase().includes(localQuery.toLowerCase()) ||
-            product.materials.some(m => m.toLowerCase().includes(localQuery.toLowerCase()))
-          )
+          products.filter(
+            (product) =>
+              product.name.toLowerCase().includes(localQuery.toLowerCase()) ||
+              product.description
+                .toLowerCase()
+                .includes(localQuery.toLowerCase()) ||
+              product.category
+                .toLowerCase()
+                .includes(localQuery.toLowerCase()) ||
+              product.materials.some((m) =>
+                m.toLowerCase().includes(localQuery.toLowerCase()),
+              ),
+          ),
         );
       } finally {
         setIsSearching(false);
@@ -83,7 +90,7 @@ export function SearchPage({
   const filteredProducts = searchResults;
 
   // Get popular searches/categories
-  const categories = Array.from(new Set(products.map(p => p.category)));
+  const categories = Array.from(new Set(products.map((p) => p.category)));
 
   return (
     <div className="min-h-screen bg-[#FAF3E8] py-10">
@@ -143,12 +150,12 @@ export function SearchPage({
                 Search Results
               </h2>
               <p className="font-['Josefin_Sans'] text-sm text-[#3A5A40]/70">
-                {isSearching ? 'Searching for craftsmanship...' : `Found ${filteredProducts.length} ${filteredProducts.length === 1 ? 'item' : 'items'} for "${localQuery}"`}
+                {isSearching
+                  ? "Searching for craftsmanship..."
+                  : `Found ${filteredProducts.length} ${filteredProducts.length === 1 ? "item" : "items"} for "${localQuery}"`}
               </p>
               {searchError && (
-                <p className="mt-3 text-sm text-[#D4703B]/90">
-                  {searchError}
-                </p>
+                <p className="mt-3 text-sm text-[#D4703B]/90">{searchError}</p>
               )}
             </div>
 
@@ -168,7 +175,10 @@ export function SearchPage({
               </div>
             ) : (
               <div className="text-center py-20 bg-white/95 rounded-[28px] border border-[#A8927B]/10 shadow-[0_20px_60px_rgba(71,56,38,0.08)]">
-                <Search size={64} className="mx-auto text-[#C77956] mb-4 opacity-80" />
+                <Search
+                  size={64}
+                  className="mx-auto text-[#C77956] mb-4 opacity-80"
+                />
                 <h3 className="font-['Amatic_SC'] text-4xl font-bold text-[#3A5A40] mb-2">
                   No results found
                 </h3>
@@ -201,7 +211,9 @@ export function SearchPage({
 
             <div className="grid md:grid-cols-4 gap-6">
               {categories.map((category, index) => {
-                const categoryProducts = products.filter(p => p.category === category);
+                const categoryProducts = products.filter(
+                  (p) => p.category === category,
+                );
                 return (
                   <button
                     key={category}

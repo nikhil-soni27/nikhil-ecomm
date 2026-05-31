@@ -65,14 +65,23 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
             </h1>
 
             <p className="mt-4 text-base leading-7 text-[#A8927B] font-['Lora']">
-              Your order has been received and will be prepared with care. We&apos;ve notified the artisan so your handcrafted pieces can be shipped soon.
+              Your order has been received and will be prepared with care.
+              We&apos;ve notified the artisan so your handcrafted pieces can be
+              shipped soon.
             </p>
 
             <div className="mt-8 rounded-3xl border border-[#A8927B]/20 bg-[#F4E9DD] p-6">
-              <p className="text-sm text-[#A8927B] font-['Lora']">Order Number</p>
-              <p className="mt-1 text-lg font-semibold text-[#3A5A40]">#{Math.floor(Math.random() * 100000)}</p>
+              <p className="text-sm text-[#A8927B] font-['Lora']">
+                Order Number
+              </p>
+              <p className="mt-1 text-lg font-semibold text-[#3A5A40]">
+                #{Math.floor(Math.random() * 100000)}
+              </p>
               <p className="mt-4 text-sm text-[#A8927B] font-['Lora']">
-                Estimated delivery: <span className="font-semibold text-[#3A5A40]">5-7 business days</span>
+                Estimated delivery:{" "}
+                <span className="font-semibold text-[#3A5A40]">
+                  5-7 business days
+                </span>
               </p>
             </div>
 
@@ -106,7 +115,9 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
         <div className="mb-12 rounded-[32px] bg-[#FAF7F2] p-5 shadow-[0_24px_60px_rgba(71,56,38,0.12)] ring-1 ring-[#A8927B]/20">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-[#A8927B] font-['Lora']">Checkout</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-[#A8927B] font-['Lora']">
+                Checkout
+              </p>
               <h2 className="mt-2 text-2xl font-semibold text-[#3A5A40] sm:text-3xl font-['Cormorant_Garamond']">
                 Secure checkout
               </h2>
@@ -114,11 +125,15 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
             <div className="grid grid-cols-2 gap-3 sm:auto-cols-auto sm:grid-flow-col">
               <div className="rounded-2xl border border-[#A8927B]/20 bg-[#F4E9DD] px-4 py-3 text-center">
                 <p className="text-xs text-[#A8927B] font-['Lora']">Shipping</p>
-                <p className="mt-2 text-lg font-semibold text-[#3A5A40]">Step 1</p>
+                <p className="mt-2 text-lg font-semibold text-[#3A5A40]">
+                  Step 1
+                </p>
               </div>
               <div className="rounded-2xl border border-[#A8927B]/20 bg-[#F4E9DD] px-4 py-3 text-center">
                 <p className="text-xs text-[#A8927B] font-['Lora']">Payment</p>
-                <p className="mt-2 text-lg font-semibold text-[#3A5A40]">Step 2</p>
+                <p className="mt-2 text-lg font-semibold text-[#3A5A40]">
+                  Step 2
+                </p>
               </div>
             </div>
           </div>
@@ -137,24 +152,34 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
 
                 <div className="space-y-5">
                   <div className="grid gap-4 sm:grid-cols-2">
-                      <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
-                        Full Name *
-                        <input
-                          type="text"
-                          required
-                          value={shippingInfo.name}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, name: e.target.value })}
-                          className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
+                    <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                      Full Name *
+                      <input
+                        type="text"
+                        required
+                        value={shippingInfo.name}
+                        onChange={(e) =>
+                          setShippingInfo({
+                            ...shippingInfo,
+                            name: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
                     </label>
-                      <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
-                        Email *
-                        <input
-                          type="email"
-                          required
-                          value={shippingInfo.email}
-                          onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
-                          className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
+                    <label className="space-y-2 text-sm text-[#3A5A40] font-['Lora']">
+                      Email *
+                      <input
+                        type="email"
+                        required
+                        value={shippingInfo.email}
+                        onChange={(e) =>
+                          setShippingInfo({
+                            ...shippingInfo,
+                            email: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
                     </label>
                   </div>
@@ -165,7 +190,12 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                       type="text"
                       required
                       value={shippingInfo.address}
-                      onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
+                      onChange={(e) =>
+                        setShippingInfo({
+                          ...shippingInfo,
+                          address: e.target.value,
+                        })
+                      }
                       className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                     />
                   </label>
@@ -177,7 +207,12 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                         type="text"
                         required
                         value={shippingInfo.city}
-                        onChange={(e) => setShippingInfo({ ...shippingInfo, city: e.target.value })}
+                        onChange={(e) =>
+                          setShippingInfo({
+                            ...shippingInfo,
+                            city: e.target.value,
+                          })
+                        }
                         className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
                     </label>
@@ -187,7 +222,12 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                         type="text"
                         required
                         value={shippingInfo.state}
-                        onChange={(e) => setShippingInfo({ ...shippingInfo, state: e.target.value })}
+                        onChange={(e) =>
+                          setShippingInfo({
+                            ...shippingInfo,
+                            state: e.target.value,
+                          })
+                        }
                         className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
                     </label>
@@ -197,7 +237,12 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                         type="text"
                         required
                         value={shippingInfo.zip}
-                        onChange={(e) => setShippingInfo({ ...shippingInfo, zip: e.target.value })}
+                        onChange={(e) =>
+                          setShippingInfo({
+                            ...shippingInfo,
+                            zip: e.target.value,
+                          })
+                        }
                         className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
                     </label>
@@ -225,7 +270,9 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                 <div className="mb-6 rounded-3xl border border-[#D4703B]/20 bg-[#FFF1EC] px-4 py-4 text-sm text-[#3A5A40] font-['Lora']">
                   <div className="flex items-center gap-3">
                     <Lock size={18} className="text-[#D4703B]" />
-                    <span>Your payment information is secure and encrypted</span>
+                    <span>
+                      Your payment information is secure and encrypted
+                    </span>
                   </div>
                 </div>
 
@@ -237,7 +284,12 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                       required
                       placeholder="1234 5678 9012 3456"
                       value={paymentInfo.cardNumber}
-                      onChange={(e) => setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })}
+                      onChange={(e) =>
+                        setPaymentInfo({
+                          ...paymentInfo,
+                          cardNumber: e.target.value,
+                        })
+                      }
                       className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                     />
                   </label>
@@ -248,7 +300,12 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                       type="text"
                       required
                       value={paymentInfo.cardName}
-                      onChange={(e) => setPaymentInfo({ ...paymentInfo, cardName: e.target.value })}
+                      onChange={(e) =>
+                        setPaymentInfo({
+                          ...paymentInfo,
+                          cardName: e.target.value,
+                        })
+                      }
                       className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                     />
                   </label>
@@ -261,7 +318,12 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                         required
                         placeholder="MM/YY"
                         value={paymentInfo.expiry}
-                        onChange={(e) => setPaymentInfo({ ...paymentInfo, expiry: e.target.value })}
+                        onChange={(e) =>
+                          setPaymentInfo({
+                            ...paymentInfo,
+                            expiry: e.target.value,
+                          })
+                        }
                         className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
                     </label>
@@ -272,7 +334,12 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
                         required
                         placeholder="123"
                         value={paymentInfo.cvv}
-                        onChange={(e) => setPaymentInfo({ ...paymentInfo, cvv: e.target.value })}
+                        onChange={(e) =>
+                          setPaymentInfo({
+                            ...paymentInfo,
+                            cvv: e.target.value,
+                          })
+                        }
                         className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-3 text-sm text-[#3A5A40] outline-none transition focus:border-[#9CAF88] focus:ring-2 focus:ring-[#9CAF88]/20"
                       />
                     </label>
@@ -302,20 +369,31 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
 
           <aside className="space-y-6">
             <div className="rounded-[32px] border border-[#A8927B]/20 bg-[#FAF7F2] p-6 shadow-[0_24px_60px_rgba(71,56,38,0.12)] lg:sticky lg:top-24">
-              <h3 className="text-2xl font-semibold text-[#3A5A40] mb-5 font-['Cormorant_Garamond']">Order summary</h3>
+              <h3 className="text-2xl font-semibold text-[#3A5A40] mb-5 font-['Cormorant_Garamond']">
+                Order summary
+              </h3>
               <div className="space-y-4">
                 {cart.map((item) => (
-                  <div key={`${item.id}-${JSON.stringify(item.customization)}`} className="flex items-center gap-3">
+                  <div
+                    key={`${item.id}-${JSON.stringify(item.customization)}`}
+                    className="flex items-center gap-3"
+                  >
                     <ImageWithFallback
                       src={item.image}
                       alt={item.name}
                       className="h-16 w-16 rounded-3xl object-cover"
                     />
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-[#3A5A40] font-['Lora']">{item.name}</p>
-                      <p className="text-xs text-[#A8927B] font-['Lora']">Qty: {item.quantity}</p>
+                      <p className="text-sm font-semibold text-[#3A5A40] font-['Lora']">
+                        {item.name}
+                      </p>
+                      <p className="text-xs text-[#A8927B] font-['Lora']">
+                        Qty: {item.quantity}
+                      </p>
                     </div>
-                    <p className="text-sm font-semibold text-[#3A5A40]">${(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-sm font-semibold text-[#3A5A40]">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -323,15 +401,21 @@ export function Checkout({ cart, onBackClick, user }: CheckoutProps) {
               <div className="mt-6 space-y-3 border-t border-[#A8927B]/20 pt-4 text-sm text-[#3A5A40] font-['Lora']">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-medium text-[#3A5A40]">${subtotal.toFixed(2)}</span>
+                  <span className="font-medium text-[#3A5A40]">
+                    ${subtotal.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span className="font-medium text-[#3A5A40]">${shipping.toFixed(2)}</span>
+                  <span className="font-medium text-[#3A5A40]">
+                    ${shipping.toFixed(2)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax</span>
-                  <span className="font-medium text-[#3A5A40]">${tax.toFixed(2)}</span>
+                  <span className="font-medium text-[#3A5A40]">
+                    ${tax.toFixed(2)}
+                  </span>
                 </div>
               </div>
 
