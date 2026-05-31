@@ -96,7 +96,7 @@ app.get("/api/products/search", async (req, res) => {
           { name: regex },
           { description: regex },
           { category: regex },
-          { materials: { $elemMatch: regex } },
+          { materials: regex },
         ],
       })
       .limit(50)
@@ -400,19 +400,17 @@ app.post("/api/cart", authenticateJWT, async (req, res) => {
   try {
     const db = getDB();
     // Upsert: update if exists, insert if not
-    await db
-      .collection("carts")
-      .updateOne(
-        { userId: req.user.id },
-        {
-          $set: {
-            userId: req.user.id,
-            items,
-            updatedAt: new Date().toISOString(),
-          },
+    await db.collection("carts").updateOne(
+      { userId: req.user.id },
+      {
+        $set: {
+          userId: req.user.id,
+          items,
+          updatedAt: new Date().toISOString(),
         },
-        { upsert: true },
-      );
+      },
+      { upsert: true },
+    );
     res.json({ success: true, message: "Cart synced successfully" });
   } catch (err) {
     console.error("Cart sync error:", err);
