@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
 import {
   X,
   ArrowLeft,
@@ -18,6 +19,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
+  console.log(import.meta.env.VITE_GOOGLE_CLIENT_ID);
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,12 +30,6 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   );
   const [resetEmail, setResetEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-
-  // Simulated Google Chooser state
-  const [showGoogleChooser, setShowGoogleChooser] = useState(false);
-  const [customGoogleName, setCustomGoogleName] = useState("");
-  const [customGoogleEmail, setCustomGoogleEmail] = useState("");
-  const [showCustomGoogleInput, setShowCustomGoogleInput] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -121,22 +117,38 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   };
 
   // Google Login - Triggered by Chooser
-  const handleGoogleAccountSelect = async (name: string, email: string) => {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+  const googleAuthUnavailable = !googleClientId;
+
+  const handleGoogleLogin = async (credential: string) => {
     setLoading(true);
-    setShowGoogleChooser(false);
 
     try {
-      const googleId = `google-${Math.random().toString(36).substring(2, 11)}`;
-      const data = await api.googleLogin(name, email, googleId);
+      const data = await api.googleLogin(credential, rememberMe);
       onSuccess(data.user);
       toast.success(`Logged in with Google as ${data.user.name}!`);
     } catch (err: any) {
       console.error("Google login error:", err);
-      toast.error(err.message || "Google Login failed");
+      setError(err.message || "Google login failed. Please try again.");
+      toast.error(err.message || "Google login failed");
     } finally {
       setLoading(false);
     }
   };
+
+  // const googleLogin = useGoogleLogin({
+  //   onSuccess: (credentialResponse) => {
+  //     if (credentialResponse?.credential) {
+  //       handleGoogleLogin(credentialResponse.credential);
+  //     } else {
+  //       setError("Failed to receive Google credentials");
+  //     }
+  //   },
+  //   onError: () => {
+  //     setError("Google authentication failed. Please try again.");
+  //   },
+  //   flow: "implicit",
+  // });
 
   if (!isOpen) return null;
 
@@ -144,9 +156,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
     <>
       <div
         className="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm"
-        onClick={() => {
-          if (!showGoogleChooser) onClose();
-        }}
+        onClick={onClose}
       />
 
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -446,13 +456,41 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                   <span className="h-px flex-1 bg-[#A8927B]/20" />
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setShowGoogleChooser(true)}
-                  className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-6 py-3 text-sm font-semibold text-[#3A5A40] shadow-sm transition hover:bg-[#FAF7F2] font-['Lora']"
-                >
-                  Continue with Google
-                </button>
+                <div className="flex justify-center">
+                  {googleAuthUnavailable ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-6 py-3 text-sm font-semibold text-[#3A5A40] opacity-70"
+                    >
+                      Google sign-in unavailable
+                    </button>
+                  ) : (
+                    <GoogleLogin
+                      onSuccess={(credentialResponse) => {
+                        console.log("GOOGLE RESPONSE", credentialResponse);
+                        if (credentialResponse.credential) {
+                          handleGoogleLogin(credentialResponse.credential);
+                        } else {
+                          setError("Failed to receive Google credentials");
+                        }
+                      }}
+                      onError={() => {
+                        setError("Google authentication failed");
+                      }}
+                      useOneTap={false}
+                    />
+                  )}
+                </div>
+                {/* {googleAuthUnavailable && (
+                  <p className="mt-3 text-center text-xs text-red-600 font-['Lora']">
+                    Google OAuth client ID is not configured. Set
+                    <code className="mx-1 rounded bg-[#F3F4F6] px-1 py-0.5 text-[11px] text-[#3A3A3A]">
+                      VITE_GOOGLE_CLIENT_ID
+                    </code>
+                    in your frontend .env.
+                  </p>
+                )} */}
 
                 <p className="mt-6 text-center text-sm text-[#3A5A40] font-['Lora']">
                   {isLogin ? "New here? " : "Already have an account? "}
@@ -469,157 +507,6 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
           </div>
         </div>
       </div>
-
-      {showGoogleChooser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
-            onClick={() => setShowGoogleChooser(false)}
-          />
-
-          <div className="relative z-10 w-full max-w-sm overflow-hidden rounded-[28px] bg-[#FAF7F2] p-6 shadow-[0_24px_70px_rgba(71,56,38,0.14)] ring-1 ring-[#A8927B]/20">
-            <button
-              onClick={() => setShowGoogleChooser(false)}
-              className="absolute right-4 top-4 text-[#3A5A40] transition hover:text-[#5A5A3E]"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="text-center mb-6 mt-2">
-              <div className="mb-1 text-2xl font-semibold tracking-tight select-none text-[#3A5A40] font-['Cormorant_Garamond']">
-                <span className="text-[#4285F4]">G</span>
-                <span className="text-[#EA4335]">o</span>
-                <span className="text-[#FBBC05]">o</span>
-                <span className="text-[#4285F4]">g</span>
-                <span className="text-[#34A853]">l</span>
-                <span className="text-[#EA4335]">e</span>
-              </div>
-              <h3 className="text-lg font-medium text-[#3A5A40] mb-1 font-['Lora']">
-                Choose an account
-              </h3>
-              <p className="text-xs text-[#A8927B] font-['Lora']">
-                to continue to <strong>Artisan Marketplace</strong>
-              </p>
-            </div>
-
-            {!showCustomGoogleInput ? (
-              <div className="space-y-2.5 mb-6">
-                {[
-                  {
-                    name: "Sarah Mitchell",
-                    email: "sarah.mitchell@gmail.com",
-                    avatar: "https://i.pravatar.cc/150?img=1",
-                  },
-                  {
-                    name: "James Cooper",
-                    email: "james.cooper@gmail.com",
-                    avatar: "https://i.pravatar.cc/150?img=12",
-                  },
-                  {
-                    name: "Emma Rodriguez",
-                    email: "emma.rodriguez@gmail.com",
-                    avatar: "https://i.pravatar.cc/150?img=5",
-                  },
-                ].map((account, index) => (
-                  <button
-                    key={index}
-                    onClick={() =>
-                      handleGoogleAccountSelect(account.name, account.email)
-                    }
-                    className="w-full rounded-3xl border border-[#A8927B]/20 bg-white p-3.5 text-left transition hover:border-[#9CAF88]/50 hover:bg-[#FAF7F2]"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={account.avatar}
-                          alt={account.name}
-                          className="h-10 w-10 rounded-full border border-[#A8927B]/20 object-cover"
-                        />
-                        <div>
-                          <p className="text-sm font-semibold text-[#3A5A40] font-['Lora']">
-                            {account.name}
-                          </p>
-                          <p className="text-xs text-[#A8927B] font-['Lora']">
-                            {account.email}
-                          </p>
-                        </div>
-                      </div>
-                      {index === 0 && (
-                        <span className="rounded-full bg-[#9CAF88]/20 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#3A5A40]">
-                          Artisan
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                ))}
-
-                <button
-                  onClick={() => setShowCustomGoogleInput(true)}
-                  className="w-full rounded-3xl border border-[#A8927B]/20 bg-white px-4 py-3 text-sm font-semibold text-[#3A5A40] transition hover:bg-[#FAF7F2] font-['Lora']"
-                >
-                  Use another account
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-4 mb-6">
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-[0.18em] text-[#A8927B] mb-1 font-['Lora']">
-                    Custom Full Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={customGoogleName}
-                    onChange={(e) => setCustomGoogleName(e.target.value)}
-                    className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-3.5 py-2.5 text-sm text-[#3A5A40] outline-none transition focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 font-['Lora']"
-                    placeholder="Enter name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-[0.18em] text-[#A8927B] mb-1 font-['Lora']">
-                    Custom Gmail Address
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={customGoogleEmail}
-                    onChange={(e) => setCustomGoogleEmail(e.target.value)}
-                    className="w-full rounded-[24px] border border-[#A8927B]/20 bg-white px-3.5 py-2.5 text-sm text-[#3A5A40] outline-none transition focus:border-[#4285F4] focus:ring-2 focus:ring-[#4285F4]/20 font-['Lora']"
-                    placeholder="name@gmail.com"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowCustomGoogleInput(false)}
-                    className="flex-1 rounded-[24px] border border-[#A8927B]/20 bg-white px-4 py-2 text-sm font-medium text-[#3A5A40] transition hover:bg-[#FAF7F2] font-['Lora']"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="button"
-                    disabled={!customGoogleName || !customGoogleEmail}
-                    onClick={() =>
-                      handleGoogleAccountSelect(
-                        customGoogleName,
-                        customGoogleEmail,
-                      )
-                    }
-                    className="flex-1 rounded-[24px] bg-[#4285F4] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#357ae8] disabled:cursor-not-allowed disabled:bg-[#cbd5e1] disabled:text-[#7A7A7A] font-['Lora']"
-                  >
-                    Sign in
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <p className="text-center text-[10px] leading-normal text-[#A8927B] font-['Lora']">
-              To proceed, Google will share your name, email address, language
-              preference, and profile picture with Artisan Marketplace.
-            </p>
-          </div>
-        </div>
-      )}
     </>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigation } from "@/app/components/Navigation";
-import { api } from "@/app/utils/api";
+import { api, getToken } from "@/app/utils/api";
 import { Hero } from "@/app/components/Hero";
 import { ProductGrid } from "@/app/components/ProductGrid";
 import { ProductDetail } from "@/app/components/ProductDetail";
@@ -105,7 +105,7 @@ function App() {
   // Restore session & fetch cart on mount
   useEffect(() => {
     const restoreSession = async () => {
-      const token = localStorage.getItem("artisan_token");
+      const token = getToken();
       if (token) {
         try {
           const userData = await api.getProfile();

@@ -1,13 +1,16 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const { OAuth2Client } = require("google-auth-library");
 const { connectDB, getDB } = require("./database");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET =
   process.env.JWT_SECRET || "artisan_marketplace_secret_key_2026";
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Always allow localhost for local development; add deployed frontend URLs via FRONTEND_URL env var
 app.use(
@@ -295,62 +298,112 @@ app.post("/api/auth/reset-password", async (req, res) => {
   }
 });
 
-// Google Authentication: Login or register simulated Google user
+// Google Authentication: Login or register a verified Google user
 app.post("/api/auth/google", async (req, res) => {
-  const { name, email, googleId } = req.body;
-
-  if (!email || !googleId) {
-    return res
-      .status(400)
-      .json({ error: "Google authentication details are required" });
-  }
-
   try {
+    const { credential } = req.body;
+
+    console.log("Google login request received");
+    console.log("Credential exists:", !!credential);
+
+    if (!credential) {
+      return res.status(400).json({
+        error: "Google credential is required",
+      });
+    }
+
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res.status(500).json({
+        error: "GOOGLE_CLIENT_ID missing in server .env",
+      });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+
+    console.log("Google payload:", payload);
+
+    if (!payload || !payload.email) {
+      return res.status(400).json({
+        error: "Invalid Google token",
+      });
+    }
+
     const db = getDB();
-    let user = await db
-      .collection("users")
-      .findOne({ email: email.toLowerCase() });
+
+    const email = payload.email.toLowerCase();
+    const name = payload.name || email.split("@")[0];
+    const googleId = payload.sub;
+
+    let user = await db.collection("users").findOne({
+      email,
+    });
 
     if (!user) {
-      // If user doesn't exist, create a new customer account
-      const salt = bcrypt.genSaltSync(10);
-      const dummyPassword = Math.random().toString(36).substring(2, 15);
-      const passwordHash = bcrypt.hashSync(dummyPassword, salt);
+      const randomPassword = Math.random().toString(36).slice(2);
 
-      user = {
-        id: Math.random().toString(36).substring(2, 11),
-        name: name || email.split("@")[0],
-        email: email.toLowerCase(),
+      const passwordHash = await bcrypt.hash(randomPassword, 10);
+
+      const newUser = {
+        id: Date.now().toString(),
+        name,
+        email,
         passwordHash,
         isArtisan: false,
+        authProvider: "google",
         googleId,
         createdAt: new Date().toISOString(),
       };
 
-      await db.collection("users").insertOne(user);
+      await db.collection("users").insertOne(newUser);
+
+      user = newUser;
+    } else {
+      await db.collection("users").updateOne(
+        { email },
+        {
+          $set: {
+            googleId,
+            authProvider: "google",
+          },
+        },
+      );
+
+      user.googleId = googleId;
     }
 
-    // Create JWT Token
     const token = jwt.sign(
-      { id: user.id, email: user.email, isArtisan: user.isArtisan },
-      JWT_SECRET,
-      { expiresIn: "24h" },
-    );
-
-    res.json({
-      user: {
+      {
         id: user.id,
         email: user.email,
-        name: user.name,
         isArtisan: user.isArtisan,
       },
+      JWT_SECRET,
+      {
+        expiresIn: "24h",
+      },
+    );
+
+    return res.json({
+      success: true,
       token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isArtisan: user.isArtisan,
+      },
     });
-  } catch (err) {
-    console.error("Google auth error:", err);
-    res
-      .status(500)
-      .json({ error: "Server error during Google authentication" });
+  } catch (error) {
+    console.error("Google authentication error:", error);
+
+    return res.status(500).json({
+      error: "Google authentication failed",
+    });
   }
 });
 

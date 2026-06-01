@@ -1,5 +1,4 @@
 import type { Product, CartItem, User } from "@/app/App";
-
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
   : "/api";
@@ -159,15 +158,14 @@ export const api = {
   },
 
   googleLogin: async (
-    name: string,
-    email: string,
-    googleId: string,
+    credential: string,
+    remember: boolean = true,
   ): Promise<{ user: User; token: string }> => {
     const data = await apiFetch<{ user: User; token: string }>("/auth/google", {
       method: "POST",
-      body: JSON.stringify({ name, email, googleId }),
+      body: JSON.stringify({ credential }),
     });
-    setToken(data.token);
+    setToken(data.token, remember);
     return data;
   },
 
